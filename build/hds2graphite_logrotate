@@ -1,0 +1,9 @@
+/opt/hds2graphite/**/*.log {
+    daily
+    rotate 7
+    missingok
+    dateext
+    copytruncate
+    compress
+    size 100M
+}

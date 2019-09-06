@@ -1,0 +1,33 @@
+# Schema definitions for Whisper files. Entries are scanned in order,
+# and first match wins. This file is scanned for changes every 60 seconds.
+#
+#  [name]
+#  pattern = regex
+#  retentions = timePerPoint:timeToStore, timePerPoint:timeToStore, ...
+
+# Carbon's internal metrics. This entry should match what is specified in
+# CARBON_METRIC_PREFIX and CARBON_METRIC_INTERVAL settings
+
+[carbon]
+pattern = ^carbon\.
+retentions = 60:90d
+
+[hds.realtime]
+pattern = ^hds\.perf\..*\.REALTIME
+retentions = 1m:7d
+
+[hds.perf]
+pattern = ^hds\.perf\.
+retentions = 1m:7d,5m:30d,1h:1y
+
+[hds.capacity]
+pattern = ^hds\.capacity\.
+retentions = 1h:1y,1d:5y
+
+[hds.et2graphite]
+pattern = ^hds\.et2graphite\.
+retentions = 1h:4y
+
+[default_1min_for_1day]
+pattern = .*
+retentions = 60s:1d

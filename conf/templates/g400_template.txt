@@ -1,0 +1,23 @@
+show                            		; Outputs storing period & gethering interval to standard output
+group PhyPG                      ; Parity Groups
+group PhyLDEV                   ; Logical Volumes
+group PhyProc                    ; Micro-Processor usage
+;group PhyExG                    ; External Volume Group usage
+;group PhyExLDEV                 ; External Volume usage
+group PhyMPU                    ; Access Paths and Write Pending
+group PG                        ; Parity Group Statistics
+;group LDEV                     ; LDEV usage in PGs, External Volume Groups or V-VOL Groups
+group Port                      ; Port usage
+group PortWWN                   ; Stats for HBAs connected to ports.
+group LU                        ; LDEV usage Summarised by LU Path
+;group PPCGWWN                   ; Stats about HBAs
+;group RemoteCopy                ; Remote Copy Usage Summarized by Subsystem
+;group RCLU                      ; Remote Copy Usage Summarized by LU path
+;group RCLDEV                    ; Remote Copy Usage Summarized by LDEV
+;group UniversalReplicator       ; Remote Copy Usage by UR Summarized by Subsystem
+;group URJNL                     ; Remote Copy Usage by UR Summarized by Journal Group
+;group URLU                      ; Remote Copy Usage by UR Summarized by LU Path
+;group URLDEV                    ; Remote Copy Usage by UR Summarized by LDEV
+group LDEVEachOfCU              ; LDEV usage in CUs - Recommended
+option nocompress clear                 			; Specifies whether to compress files
+apply                           				; Executes processing for saving monitoring data in files

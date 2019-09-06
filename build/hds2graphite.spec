@@ -1,0 +1,118 @@
+Summary: hds2graphite is a module of openiomon which is used to to transfer statistics from the HDS block storage systems (G1x00, Gx00, VSP) to a graphite system to be able to display this statistics in Grafana.
+Name: hds2graphite
+Version: 0.3
+prefix: /opt
+Release: 1
+URL: http://www.openiomon.org
+License: GPL
+Group: Applications/Internet
+BuildRoot: %{_tmppath}/%{name}-root
+Source0: hds2graphite-%{version}.tar.gz
+BuildArch: noarch
+AutoReqProv: no
+Requires: perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(Log::Log4perl) perl(POSIX) perl(Switch) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl-Exporter-Tiny perl(Readonly) perl(version)
+
+
+
+%description
+Module for integration of HDS block storage (G1x00, Gx00, VSP) to Grafana. Data is pulled using Exportool or HiAA or HTnM from HDS and send via plain text protocol to graphite / carbon cache systems.
+
+%pre
+getent group openiomon >/dev/null || groupadd -r openiomon
+getent passwd openiomon >/dev/null || \
+    useradd -r -g openiomon -d /opt/bna2graphite -s /sbin/nologin \
+    -c "This user will be used for modules of openiomon" openiomon
+exit 0
+
+%prep
+
+%setup
+
+%build
+
+%install
+rm -rf ${RPM_BUILD_ROOT}
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/arch/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/bin/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/metrics
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/templates
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/log/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/out/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/run/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/vsp/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/lib/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g1000/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g1500/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g400/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g600/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g800/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g900/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g700/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g370/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g350/
+mkdir -p ${RPM_BUILD_ROOT}/etc/go-carbon/
+mkdir -p ${RPM_BUILD_ROOT}/etc/logrotate.d/
+install -m 755 %{_builddir}/hds2graphite-%{version}/bin/* ${RPM_BUILD_ROOT}/opt/hds2graphite/bin/
+install -m 644 %{_builddir}/hds2graphite-%{version}/conf/*.conf ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/
+install -m 644 %{_builddir}/hds2graphite-%{version}/conf/metrics/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/metrics
+install -m 644 %{_builddir}/hds2graphite-%{version}/conf/templates/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/templates
+install -m 644 %{_builddir}/hds2graphite-%{version}/conf/*.conf.hds2graphite ${RPM_BUILD_ROOT}/etc/go-carbon/
+install -m 644 %{_builddir}/hds2graphite-%{version}/conf/hds2graphite_logrotate ${RPM_BUILD_ROOT}/etc/logrotate.d/hds2graphite
+
+
+%clean
+rm -rf ${RPM_BUILD_ROOT}
+
+%files
+%defattr(644,openiomon,openiomon)
+%config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/*.conf
+%config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/metrics/*.conf
+%config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/templates/*.txt
+%config(noreplace) %attr(644,root,root) /etc/go-carbon/storage-schemas.conf.hds2graphite
+%config(noreplace) %attr(644,root,root) /etc/go-carbon/storage-aggregation.conf.hds2graphite
+%config(noreplace) %attr(644,root,root) /etc/logrotate.d/hds2graphite
+
+%attr(755,openiomon,openiomon) /opt/hds2graphite
+%attr(755,openiomon,openiomon) /opt/hds2graphite/*
+%attr(755,openiomon,openiomon) /opt/hds2graphite/bin/*
+#%attr(755,root,root) /opt/hds2graphite/arch
+#%attr(755,root,root) /opt/hds2graphite/log
+#%attr(755,root,root) /opt/hds2graphite/out
+#%attr(755,root,root) /opt/hds2graphite/run
+#%attr(755,root,root) /opt/hds2graphite/vsp
+#%attr(755,root,root) /opt/hds2graphite/lib
+#%attr(755,root,root) /opt/hds2graphite/g1000
+#%attr(755,root,root) /opt/hds2graphite/g1500
+#%attr(755,root,root) /opt/hds2graphite/g400
+#%attr(755,root,root) /opt/hds2graphite/g600
+#%attr(755,root,root) /opt/hds2graphite/g800
+
+%post
+ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
+
+%changelog
+* Mon Dec 03 2018 Timo Drach <timo.drach@cse-ub.de>
+- Added support for Panama 2 Systeme
+- Added support for Cache Partitions
+- Added support for multi-vsm-GAD implementations
+* Tue Aug 21 2018 Timo Drach <timo.drach@cse-ub.de>
+- fixed minor issues
+* Sun Aug 19 2018 Timo Drach <timo.drach@cse-ub.de>
+- Changed config file struture
+- added support for VSMs and GAD
+- enhanded realtime gathering for HDS2GRAPHITE
+- Changed package dependencies
+* Mon May 21 2018 Timo Drach <timo.drach@cse-ub.de>
+- Added realtime monitor for HDS2GRAPHITE
+* Tue Mar 06 2018 Timo Drach <timo.drach@cse-ub.de>
+- Changed some file permission to use user openiomon:openiomon
+- rewritten creating of horcm.conf files
+* Tue Jan 09 2018 Timo Drach <timo.drach@cse-ub.de>
+- Added support for dropping service messages from syslog
+* Tue Jan 02 2018 Timo Drach <timo.drach@cse-ub.de>
+- Added creation of service user openiomon and changed file ownership
+- Added logrotate file to build process
+* Sat Dec 09 2017 Timo Drach <timo.drach@cse-ub.de
+- Added support for config files in RPM-packge for go-carbon, metric and template configfiles.
+* Wed Nov 22 2017 Timo Drach <timo.drach@cse-ub.de>
+- Initial version
