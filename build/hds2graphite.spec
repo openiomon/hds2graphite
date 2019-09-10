@@ -1,4 +1,4 @@
-Summary: hds2graphite is a module of openiomon which is used to to transfer statistics from the HDS block storage systems (G1x00, Gx00, VSP) to a graphite system to be able to display this statistics in Grafana.
+Summary: hds2graphite is a module of openiomon which is used to transfer statistics from the Hitachi block storage systems (G1x00, Gx00, VSP) to a graphite system to be able to display this statistics in Grafana.
 Name: hds2graphite
 Version: 0.3
 prefix: /opt
@@ -10,18 +10,18 @@ BuildRoot: %{_tmppath}/%{name}-root
 Source0: hds2graphite-%{version}.tar.gz
 BuildArch: noarch
 AutoReqProv: no
-Requires: perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(Log::Log4perl) perl(POSIX) perl(Switch) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl-Exporter-Tiny perl(Readonly) perl(version)
+Requires: perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(Log::Log4perl) perl(POSIX) perl(Switch) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
 
 
 
 %description
-Module for integration of HDS block storage (G1x00, Gx00, VSP) to Grafana. Data is pulled using Exportool or HiAA or HTnM from HDS and send via plain text protocol to graphite / carbon cache systems.
+Module for integration of Hitachi block storage (G1x00, Gx00, VSP) to Grafana. Data is pulled using Export Tool or HiAA or HTnM from Hitachi Vantara and send via plain text protocol to graphite / carbon cache systems.
 
 %pre
 getent group openiomon >/dev/null || groupadd -r openiomon
 getent passwd openiomon >/dev/null || \
-    useradd -r -g openiomon -d /opt/bna2graphite -s /sbin/nologin \
-    -c "This user will be used for modules of openiomon" openiomon
+    useradd -r -g openiomon -d /home/openiomon -s /sbin/nologin \
+    -c "openiomon module daemon user" openiomon
 exit 0
 
 %prep
@@ -50,13 +50,11 @@ mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g900/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g700/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g370/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g350/
-mkdir -p ${RPM_BUILD_ROOT}/etc/go-carbon/
 mkdir -p ${RPM_BUILD_ROOT}/etc/logrotate.d/
 install -m 755 %{_builddir}/hds2graphite-%{version}/bin/* ${RPM_BUILD_ROOT}/opt/hds2graphite/bin/
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/*.conf ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/metrics/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/metrics
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/templates/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/templates
-install -m 644 %{_builddir}/hds2graphite-%{version}/conf/*.conf.hds2graphite ${RPM_BUILD_ROOT}/etc/go-carbon/
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/hds2graphite_logrotate ${RPM_BUILD_ROOT}/etc/logrotate.d/hds2graphite
 
 
@@ -68,8 +66,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/*.conf
 %config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/metrics/*.conf
 %config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/templates/*.txt
-%config(noreplace) %attr(644,root,root) /etc/go-carbon/storage-schemas.conf.hds2graphite
-%config(noreplace) %attr(644,root,root) /etc/go-carbon/storage-aggregation.conf.hds2graphite
 %config(noreplace) %attr(644,root,root) /etc/logrotate.d/hds2graphite
 
 %attr(755,openiomon,openiomon) /opt/hds2graphite

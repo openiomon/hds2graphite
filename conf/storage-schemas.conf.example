@@ -1,3 +1,5 @@
+# !Example - Copy to your preferred carbon cache configuration file!
+#
 # Schema definitions for Whisper files. Entries are scanned in order,
 # and first match wins. This file is scanned for changes every 60 seconds.
 #
@@ -24,7 +26,7 @@ retentions = 1m:7d,5m:30d,1h:1y
 pattern = ^hds\.capacity\.
 retentions = 1h:1y,1d:5y
 
-[hds.et2graphite]
+[hds.hds2graphite]
 pattern = ^hds\.et2graphite\.
 retentions = 1h:4y
 
