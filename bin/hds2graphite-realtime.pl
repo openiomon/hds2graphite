@@ -5,6 +5,7 @@
 #
 #
 
+use v5.10;
 use strict;
 use warnings;
 use constant false => 0;
@@ -17,7 +18,6 @@ use Log::Log4perl;
 use LWP::UserAgent();
 use POSIX qw(strftime);
 use POSIX ":sys_wait_h";
-use Switch;
 use Systemd::Daemon qw( -hard notify );
 use Time::HiRes qw(nanosleep usleep gettimeofday tv_interval);
 use Time::Piece;
@@ -56,16 +56,6 @@ my $storagetype="";
 my %htnm_agents;
 my $instance = '';
 my $instance_hostname = '';
-#my @units = ('RAID_PI_PTS','RAID_PI_PRCS');
-#my %metrics = (
-#   'RAID_PI_PTS' => ['READ_IO_COUNT','READ_IO_RATE','WRITE_IO_COUNT','WRITE_IO_RATE','TOTAL_IO_COUNT','MAX_IO_RATE','MIN_IO_RATE','AVG_IO_RATE','READ_MBYTES','READ_XFER_RATE','WRITE_MBYTES','WRITE_XFER_RATE','TOTAL_MBYTES','MAX_XFER_RATE','MIN_XFER_RATE','AVG_XFER_RATE','READ_TOTAL_RESPONSE','READ_RESPONSE_RATE','WRITE_TOTAL_RESPONSE','WRITE_RESPONSE_RATE','INITIATOR_TOTAL_IO_COUNT','INITIATOR_MAX_IO_RATE','INITIATOR_MIN_IO_RATE','INITIATOR_AVG_IO_RATE','INITIATOR_TOTAL_MBYTES','INITIATOR_MAX_XFER_RATE','INITIATOR_MIN_XFER_RATE','INITIATOR_AVG_XFER_RATE'],
-#   'RAID_PI_PRCS' => ['PROCESSOR_BUSY_RATE','MAX_PROCESSOR_BUSY_RATE','MAX_BUFFER_LENGTH','BUFFER_IO_COUNT','MAX_BUFFER_IO_COUNT','BUFFER_IO_RATE','MAX_BUFFER_IO_RATE'],
-#);
-
-#my %labels = (
-#   'RAID_PI_PTS'=>['PORT_NAME'],
-#   'RAID_PI_PRCS'=>['ADAPTOR_ID','PROCESSOR_ID'],
-#);
 
 my @units;
 my %metrics;
@@ -81,6 +71,7 @@ my $interval = 60;
 my $hdsdateformat = "%Y-%m-%d %H:%M:%S";
 
 my $log;
+my $logpath = '/opt/hds2graphite/log/';
 my $logfile='';
 my $loglevel = 'INFO';
 
@@ -106,6 +97,17 @@ sub parseCmdArgs {
         or die("Error in command line arguments\n");
 
     if($help) {
+        printUsage();
+        exit(0);
+    }
+
+    if($conf eq "") {
+        print("Configuration file has not been specified!\n");
+        printUsage();
+        exit(0);
+    }
+    if($storagename eq "") {
+        print("Storagesystem has not been specified!\n");
         printUsage();
         exit(0);
     }
@@ -142,9 +144,16 @@ sub readconfig {
                         $configline =~ s/\s//g;
                         $section = $configline;
                 } else {
-                switch($section) {
-                    case "logging" {
+                given($section) {
+                    when ("logging") {
                         my @values = split ("=",$configline);
+                        if ($confgline=~"hds2graphite_logdir") {
+                                my $logpath = $values[1];
+                                $logpath =~s/\s//g;
+                                if(substr($logpath,-1) ne "/") {
+                                    $logpath = $logpath."/";
+                                }
+                        }
                         if ($configline=~"loglevel") {
                                 my $configloglevel = $values[1];
                                 $configloglevel=~ s/\s//g;
@@ -163,7 +172,7 @@ sub readconfig {
                                 }
                         }
                     }
-                    case "graphite" {
+                    when ("graphite") {
                         my @values = split ("=",$configline);
                         if($configline =~ "host") {
                             $graphite_host = $values[1];
@@ -173,7 +182,7 @@ sub readconfig {
                             $graphite_port =~ s/\s//g;
                         }
                                         }
-                    case "realtime" {
+                    when ("realtime") {
                         my @values = split("=",$configline);
                         if($configline =~ "realtime_application") {
                             $htnm_appl = $values[1];
@@ -195,13 +204,13 @@ sub readconfig {
                             $htnm_passwd =~s/\s//g;
                         }
                     }
-                    case "performance" {
+                    when ("performance") {
                         my @values = split ("=",$configline);
                         if($configline =~ "max_metrics_per_minute") {
                             $maxmetricsperminute = $values[1];
                         }
                     }
-                    else {
+                    default {
                         $arrayserial = $section;
                         #print $conf_storagename."\n";
                         my @values = split ("=",$configline);
@@ -670,7 +679,7 @@ sub alive {
 #
 parseCmdArgs();
 
-$logfile='/opt/hds2graphite/log/hds2graphite-realtime-'.$storagename.'.log';
+$logfile=$logpath.'hds2graphite-realtime-'.$storagename.'.log';
 
 # Log4perl initialzation...
 my $log4perlConf  = qq(
