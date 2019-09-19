@@ -2,15 +2,15 @@ Summary: hds2graphite is a module of openiomon which is used to transfer statist
 Name: hds2graphite
 Version: 0.3
 prefix: /opt
-Release: 1
+Release: 2
 URL: http://www.openiomon.org
 License: GPL
 Group: Applications/Internet
 BuildRoot: %{_tmppath}/%{name}-root
 Source0: hds2graphite-%{version}.tar.gz
-BuildArch: noarch
+BuildArch: x86_64
 AutoReqProv: no
-Requires: perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(Log::Log4perl) perl(POSIX) perl(Switch) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
+Requires: perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(Log::Log4perl) perl(POSIX) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
 
 
 
@@ -56,13 +56,13 @@ install -m 644 %{_builddir}/hds2graphite-%{version}/conf/*.conf ${RPM_BUILD_ROOT
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/metrics/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/metrics
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/templates/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/templates
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/hds2graphite_logrotate ${RPM_BUILD_ROOT}/etc/logrotate.d/hds2graphite
-
+cp -a %{_builddir}/hds2graphite-%{version}/lib/* ${RPM_BUILD_ROOT}/opt/hds2graphite/lib/
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 
 %files
-%defattr(644,openiomon,openiomon)
+%defattr(644,openiomon,openiomon,755)
 %config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/*.conf
 %config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/metrics/*.conf
 %config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/templates/*.txt
@@ -71,6 +71,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %attr(755,openiomon,openiomon) /opt/hds2graphite
 %attr(755,openiomon,openiomon) /opt/hds2graphite/*
 %attr(755,openiomon,openiomon) /opt/hds2graphite/bin/*
+%attr(755,openiomon,openiomon) /opt/bna2graphite/lib/perl5/
 #%attr(755,root,root) /opt/hds2graphite/arch
 #%attr(755,root,root) /opt/hds2graphite/log
 #%attr(755,root,root) /opt/hds2graphite/out
@@ -87,6 +88,10 @@ rm -rf ${RPM_BUILD_ROOT}
 ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
 
 %changelog
+* Thu Sep 19 2019 Timo Drach <timo.drach@openiomon.org>
+- Preparation for release on github
+- Added PERL5 systemd libraries
+- Changes in logfilehandling for hds2graphite-realtime
 * Mon Dec 03 2018 Timo Drach <timo.drach@cse-ub.de>
 - Added support for Panama 2 Systeme
 - Added support for Cache Partitions
