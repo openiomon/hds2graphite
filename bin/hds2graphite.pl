@@ -16,6 +16,7 @@
 # ==============================================================================================
 
 
+use v5.10;
 use strict;
 use warnings;
 use constant false => 0;
@@ -24,12 +25,14 @@ use constant true  => 1;
 use Getopt::Long;
 use Log::Log4perl;
 use POSIX qw(strftime);
-use Switch;
+
 
 # For all initially initialized variables, values represent defaults used if they are not specified via configfile
 # log variables
 my $log; # log4perl logger
-my $logfile = '/opt/hds2graphite/log/hds2graphite.log';
+my $logpath = '/opt/hds2graphite/log/';
+my $logname = 'hds2graphite.log';
+my $logfile = "";
 my $loglevel = 'INFO';
 
 # command arguments variables
@@ -172,12 +175,15 @@ sub readconfig {
                 $section = $configline;
             } else {
                 # Read the config parameters based on the config file section
-                switch($section) {
-                    case "logging" {
+                given($section) {
+                    when ("logging") {
                         my @values = split ("=",$configline);
-                        if($configline=~"hds2graphitelog") {
-                            $logfile = $values[1];
-                            $logfile =~ s/\s//g;
+                        if($configline=~"hds2graphite_logdir") {
+                            $logpath = $values[1];
+                            $logpath =~ s/\s//g;
+                            if(substr($logpath,-1) ne "/") {
+                                    $logpath = $logpath."/";
+                            }
                         } elsif ($configline=~"loglevel") {
                             my $configloglevel = $values[1];
                             $configloglevel=~ s/\s//g;
@@ -197,7 +203,7 @@ sub readconfig {
                             # otherwise keep default which is INFO
                         }
                     }
-                    case "service" {
+                    when ("service") {
                         my @values = split ("=",$configline);
                         if($configline =~ "service_run_every_hours") {
                             $runeveryhours = $values[1];
@@ -225,7 +231,7 @@ sub readconfig {
                             }
                         }
                     }
-                    else {
+                    default {
                         $arrayserial = $section;
                         my @values = split ("=",$configline);
                         if($configline =~ "subsystem_type") {
@@ -560,6 +566,8 @@ sub servicestatus {
 
 # parse CLI parameters
 parseCmdArgs();
+
+$logfile = $logpath.$logname;
 
 # Log4perl initialization
 my $log4perlConf  = qq(
