@@ -147,7 +147,7 @@ sub readconfig {
                 given($section) {
                     when ("logging") {
                         my @values = split ("=",$configline);
-                        if ($confgline=~"hds2graphite_logdir") {
+                        if ($configline=~"hds2graphite_logdir") {
                                 my $logpath = $values[1];
                                 $logpath =~s/\s//g;
                                 if(substr($logpath,-1) ne "/") {
