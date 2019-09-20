@@ -71,7 +71,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %attr(755,openiomon,openiomon) /opt/hds2graphite
 %attr(755,openiomon,openiomon) /opt/hds2graphite/*
 %attr(755,openiomon,openiomon) /opt/hds2graphite/bin/*
-%attr(755,openiomon,openiomon) /opt/bna2graphite/lib/perl5/
+%attr(755,openiomon,openiomon) /opt/hds2graphite/lib/perl5/
 #%attr(755,root,root) /opt/hds2graphite/arch
 #%attr(755,root,root) /opt/hds2graphite/log
 #%attr(755,root,root) /opt/hds2graphite/out
