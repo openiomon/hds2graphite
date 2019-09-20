@@ -10,7 +10,7 @@ BuildRoot: %{_tmppath}/%{name}-root
 Source0: hds2graphite-%{version}.tar.gz
 BuildArch: x86_64
 AutoReqProv: no
-Requires: perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(Log::Log4perl) perl(POSIX) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
+Requires: perl(JSON) perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(Log::Log4perl) perl(POSIX) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
 
 
 

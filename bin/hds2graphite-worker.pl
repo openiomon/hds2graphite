@@ -15,6 +15,7 @@
 #
 # ==============================================================================================
 
+use v5.10;
 use strict;
 use warnings;
 use constant false => 0;
@@ -26,7 +27,6 @@ use IO::Socket::INET;
 use Log::Log4perl;
 use POSIX ":sys_wait_h";
 use POSIX qw(strftime ceil);
-use Switch;
 use Systemd::Daemon qw( -hard notify );
 use Time::HiRes qw(nanosleep usleep gettimeofday tv_interval);
 use Time::Local;
@@ -335,8 +335,8 @@ sub readconfig {
                 $section = $configline;
             } else {
                 # Read the config parameters based on the config file section
-                switch($section) {
-                    case "logging" {
+                given($section) {
+                    when ("logging") {
                         my @values = split ("=",$configline);
                         if($configline=~"hds2graphite_logdir") {
                             $logfile = $values[1];
@@ -363,7 +363,7 @@ sub readconfig {
                             # otherwise keep default which is INFO
                         }
                     }
-                    case "exporttool" {
+                    when ("exporttool") {
                         my @values = split ("=",$configline);
                         if($configline =~ "exporttool_path") {
                             $exporttoolpath = $values[1];
@@ -376,7 +376,7 @@ sub readconfig {
                             $exporttoolretrytimeout =~ s/\s//g;
                         }
                     }
-                    case "graphite" {
+                    when ("graphite") {
                         my @values = split ("=",$configline);
                         if($configline =~ "host") {
                             $graphitehost = $values[1];
@@ -386,7 +386,7 @@ sub readconfig {
                             $graphiteport =~ s/\s//g;
                         }
                     }
-                    case "cci" {
+                    when ("cci") {
                         my @values = split ("=",$configline);
                         if($configline =~ "cci_user") {
                             $cciuser = $values[1];
@@ -396,7 +396,7 @@ sub readconfig {
                             $ccipasswd =~ s/\s//g;
                         }
                     }
-                    case "gad" {
+                    when ("gad") {
                         my @values = split ("=",$configline);
                         if($configline =~ "usevirtualldevs") {
                             if($values[1]=~"1") {
@@ -404,13 +404,13 @@ sub readconfig {
                             }
                         }
                     }
-                    case "performance" {
+                    when ("performance") {
                         my @values = split ("=",$configline);
                         if($configline =~ "max_metrics_per_minute") {
                             $maxmetricsperminute = $values[1];
                         }
                     }
-                    case "archive" {
+                    when ("archive") {
                         my @values = split ("=",$configline);
                         my $value = $values[1];
                         $value =~ s/\s//g;
@@ -429,7 +429,7 @@ sub readconfig {
                             $hourstopreserve = $value;
                         }
                     }
-                    case "service" {
+                    when ("service") {
                         my @values = split ("=",$configline);
                         if($configline =~ "service_run_every_hours") {
                             $runeveryhours = $values[1];
@@ -437,7 +437,7 @@ sub readconfig {
                             $minafterfullhours = $values[1];
                         }
                     }
-                    else {
+                    default {
                         $arrayserial = $section;
                         if($configline =~ "subsystem_type") {
                             my @values = split ("=",$configline);
