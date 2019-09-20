@@ -286,12 +286,12 @@ sub isPanama {
     my $type = $_[0];
     $type = uc($type);
 #   print("In isPanama-Check: ".$type."\n");
-    switch ($type) {
-        case "G200" {return true}
-        case "G400" {return true}
-        case "G600" {return true}
-        case "G800" {return true}
-        else {return false}
+    given ($type) {
+        when ("G200") {return true}
+        when ("G400") {return true}
+        when ("G600") {return true}
+        when ("G800") {return true}
+        defaults {return false}
     }
 }
 
@@ -301,12 +301,12 @@ sub isPanama2 {
     my $type = $_[0];
     $type = uc($type);
 #   print("In isPanama2-Check: ".$type."\n");
-    switch ($type) {
-        case "G350" {return true}
-        case "G370" {return true}
-        case "G700" {return true}
-        case "G900" {return true}
-        else {return false}
+    given ($type) {
+        when ("G350") {return true}
+        when ("G370") {return true}
+        when ("G700") {return true}
+        when ("G900") {return true}
+        default {return false}
     }
 }
 
