@@ -134,7 +134,7 @@ sub printUsage {
     print("   -storagesystem <name>    name of the storage system to be imported\n");
     print("   -hours <number of hours> number of hours that should be imported (between 1 and 23)\n");
     print("   -exportpath <dir>        points to directory where Export Tool data is stored for optional manual import\n");
-    print("   -daemon                  used for starting the deamonized version of hds2graphitelog\n");
+    print("   -daemon                  used for starting the deamonized version of hds2graphite\n");
     print("   -h                       print this output\n");
     print("\n");
 }
@@ -891,8 +891,12 @@ sub startexporttool {
     my $cmdfile = $exporttoolpath.$arraytype{$serial}."/".$serial.".txt";
     my $exporttoollog = $etlogfile.$serial;
     my $returnvalue = 0;
-
     my $pid = fork();
+
+    if(! -f "/usr/bin/java") {
+        $log->error("No java found in /usr/bin/java. Please check and install java!");
+        exit(1);
+    }
 
     if(!$pid) {
         # All G1x00/F1x00 and Gx00/Fx00 systems are handled identical
@@ -902,6 +906,7 @@ sub startexporttool {
             my $javacmd = "/usr/bin/java -classpath \"".$classpath."\" -Del.tool.Xmx=536870912 -Dmd.command=".$cmdfile." -Del.logpath=".$exporttoollog."  -Dmd.rmitimeout=20 sanproject.getexptool.RJElMain";
             $log->info("Executing: ".$javacmd);
             $returnvalue = system("/usr/bin/java","-classpath", $classpath , "-Del.tool.Xmx=536870912", "-Dmd.command=".$cmdfile,"-Del.logpath=".$exporttoollog,"-Dmd.rmitimeout=20", "sanproject.getexptool.RJElMain");
+ 
         } elsif ($arraytype{$serial} eq "vsp") {
             $classpath = $exporttoolpath.$arraytype{$serial}."/lib/JSanExport.jar:".$exporttoolpath.$arraytype{$serial}."/lib/JSanRmiApiEx.jar:".$exporttoolpath.$arraytype{$serial}."/lib/JSanRmiServerUx.jar";
             my $javacmd = "/usr/bin/java -classpath \"".$classpath."\" -Xmx536870912 -Dmd.command=".$cmdfile." -Dmd.logpath=".$exporttoollog." -Dmd.rmitimeout=20 sanproject.getmondat.RJMdMain";
