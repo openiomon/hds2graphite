@@ -2,7 +2,7 @@ Summary: hds2graphite is a module of openiomon which is used to transfer statist
 Name: hds2graphite
 Version: 0.3
 prefix: /opt
-Release: 2
+Release: 3
 URL: http://www.openiomon.org
 License: GPL
 Group: Applications/Internet
@@ -88,6 +88,8 @@ rm -rf ${RPM_BUILD_ROOT}
 ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
 
 %changelog
+* Mon Sep 23 2019 Timo Drach <timo.drach@openiomon.org>
+- Cleanup or perl libraries and dependencies
 * Thu Sep 19 2019 Timo Drach <timo.drach@openiomon.org>
 - Preparation for release on github
 - Added PERL5 systemd libraries
