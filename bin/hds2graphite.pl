@@ -93,7 +93,7 @@ sub printUsage {
     print("   -restart      <name or ALL>   restart for the service for the storagesystem\n");
     print("   -status       <name or ALL>   status of the service for the storagesystem\n");
     print("   -realtime                     if this option is specified actions (register, deregsiter, start, stop, enable, disable, status) \n");
-    print("   -preparecci                   this option will install and configure CCI to be used for hds2graphite \n");
+    print("   -preparecci                   this option will install and configure CCI to be used for hds2graphite. CCI Image need to be stored at /opt/hds2graphite/CCI/RMHORC. \n");
     print("                                 will be performed for realtime collections services.\n");
     print("   -h                            print this output\n");
     print("\n");
