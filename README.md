@@ -28,6 +28,8 @@ Perl dependencies that are not available in RHEL / CentOS 7 repositories:
 
 For other Linux distributions you can just clone the repository. Default installation folder is `/opt/hds2graphite`. The service operates with a user called "openiomon"
 
+For installation of Hitachi Command Control Interface (CCI) needed for non-realtime-performance-data copy the the CCI CPIO archive to `/opt/hds2graphite/cci/` and run `hds2graphite -preparecci`.
+
 ## Configuration
 1. Edit the `/opt/hds2graphite/conf/hds2graphite.conf`, settings you have to edit for a start:
 
