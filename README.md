@@ -8,16 +8,18 @@
 
 # hds2graphite
 
-A tool to retrieve Hitachi Block Storage Performance counters via Hitachi Export Tool or Hitachi Tuning Manager (HTNM) / Infrastructure Analytics Advisor (HIAA) and write them to a Carbon/Graphite backend.
-* Written in Perl.
+A tool to retrieve Hitachi Block Storage performance counters via Hitachi Export Tool (historical) or Hitachi Tuning Manager (HTNM) / Infrastructure Analytics Advisor (HIAA) (realtime) and write them to a Carbon/Graphite backend.
+* Written in Perl
 * tested on RHEL / CentOS 7
 * RPM package available
 
 ## Features
-* Add one or more storage system instances
-* configurable retrieval time
+* Add one or more storage system instances and/or virtual storage machines
+* configurable retrieval time for historical performance data
 * configurable metrics
 * Workers run as systemd service
+* thottling to prevent overloading carbon backends
+* runs in non-root environment as service user
 
 ## Installation
 Install on RHEL via RPM package: `yum install hds2graphite-0.x-x.rpm`
