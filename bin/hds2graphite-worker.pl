@@ -56,6 +56,7 @@ my $exporttoolstatus = true;
 my $graphitehost = ""; # IP address or name of the Graphite host => provided by config file
 my $graphiteport = ""; # Port of the Graphite host => provided by config file
 
+my $ccipath = '/opt/hds2graphite/cci/HORCM';
 my $cciuser = ""; # CCI user => provided by config file
 my $ccipasswd = ""; # CCI passwd => provided by config file
 
@@ -962,8 +963,12 @@ sub clearexporttoollogs {
 
 # Sub to create the HORCM.conf file in /etc/ directory
 sub createhorcmconf {
-    $log->info("Creating horcm".$horcminst.".conf in /etc/ !");
-    my $horcminstfile = '/etc/horcm'.$horcminst.'.conf';
+    my $horcmconfdir = '/etc';
+    if($ccipath ne "/HORCM") {
+        $horcmconfdir = $ccipath.'/etc'; 
+    }
+    $log->info("Creating horcm".$horcminst.".conf in ".$horcmconfdir." !");
+    my $horcminstfile = $horcmconfdir.'/horcm'.$horcminst.'.conf';
     open my $horcmfilefp, '>', $horcminstfile or die "Can't open $horcminstfile because of: $!";
     print $horcmfilefp "HORCM_MON\n";
     # HORCM Serviceport = 11 + Instance-Numer 3-digits with leading 0
@@ -1056,7 +1061,7 @@ sub execccicmd {
 
 sub starthorcm {
     $log->info("Starting HORCM instance #",$horcminst);
-    my $horcmstartcmd = "/HORCM/usr/bin/horcmstart.sh ".$horcminst;
+    my $horcmstartcmd = $ccipath."/usr/bin/horcmstart.sh ".$horcminst;
     my @returnvalue = runccicmd($horcmstartcmd);
     foreach my $returnline (@returnvalue) {
         if ($returnline =~ "already been running") {
@@ -1064,7 +1069,7 @@ sub starthorcm {
             shutdownhorcm();
             starthorcm();
         } elsif ($returnline =~ "failed to start") {
-            $log->fatal("Failed to start HORCM instance #",$horcminst,"! Please inspect CCI logs under /HORCM/log".$horcminst);
+            $log->fatal("Failed to start HORCM instance #",$horcminst,"! Please inspect CCI logs under ".$ccipath."/log".$horcminst);
             exit(1);
         }
     }
@@ -1074,9 +1079,9 @@ sub starthorcm {
 
 sub shutdownhorcm {
         $log->info("Stoping HORCM instance #",$horcminst);
-        my $returnvalue = execccicmd("/HORCM/usr/bin/horcmshutdown.sh ".$horcminst);
+        my $returnvalue = execccicmd($ccipath."/usr/bin/horcmshutdown.sh ".$horcminst);
         if($returnvalue != 0) {
-                $log->fatal("Failed to stop HORCM instance #",$horcminst,"! Please inspect CCI logs under /opt/HORCM/log".$horcminst);
+                $log->fatal("Failed to stop HORCM instance #",$horcminst,"! Please inspect CCI logs under ".$ccipath."/log".$horcminst);
                 exit(1);
         }
 }
@@ -1085,7 +1090,7 @@ sub shutdownhorcm {
 
 sub raidcomlogin {
     $log->info("Logging in with raidcom on instance #".$horcminst." with user ".$cciuser);
-    my $returnvalue = execccicmd("/HORCM/usr/bin/raidcom -login ".$cciuser." ".$ccipasswd." -I".$horcminst);
+    my $returnvalue = execccicmd($ccipath."/usr/bin/raidcom -login ".$cciuser." ".$ccipasswd." -I".$horcminst);
     if($returnvalue != 0) {
         $log->fatal("Failed to login to HORCM instance #",$horcminst,"! Please inspect CCI logs under /opt/HORCM/log".$horcminst);
         exit(1);
@@ -1096,7 +1101,7 @@ sub raidcomlogin {
 
 sub raidcomlogout {
     $log->info("Logout from raidcom instance #".$horcminst."!");
-    my $returnvalue = execccicmd("/HORCM/usr/bin/raidcom -logout -I".$horcminst);
+    my $returnvalue = execccicmd($ccipath."/usr/bin/raidcom -logout -I".$horcminst);
     if($returnvalue != 0) {
         $log->fatal("Failed to login to HORCM instance #",$horcminst,"! Please inspect CCI logs under /opt/HORCM/log".$horcminst);
         exit(1);
@@ -1107,7 +1112,7 @@ sub raidcomlogout {
 
 sub getpools {
     $log->info("Retrieving pools from HORCM instance #".$horcminst);
-    my $getpoolcmd = "raidcom get pool -I".$horcminst;
+    my $getpoolcmd = $ccipath."/usr/bin/raidcom get pool -I".$horcminst;
     my @result = runccicmd($getpoolcmd);
     my $poolcnt = 0;
     foreach my $line (@result) {
@@ -1136,7 +1141,7 @@ sub getpools {
 sub getpgs {
     @pgs = ();
     $log->info("Retrieving parity groups for HORCM instance #".$horcminst);
-    my $getpgcmd = "raidcom get parity_grp -I".$horcminst;
+    my $getpgcmd = $ccipath."/usr/bin/raidcom get parity_grp -I".$horcminst;
     my @result = runccicmd($getpgcmd);
     my $pgcnt = 0;
     foreach my $line (@result) {
@@ -1191,7 +1196,7 @@ sub makeplainldevid {
 sub getdpldevs {
     $log->info("Retrieving LDEV information for all pools");
     foreach my $poolid (sort keys %poolstats) {
-        my $ldevquery = "raidcom get ldev -ldev_list dp_volume -pool_id ".$poolid." -fx -I".$horcminst;
+        my $ldevquery = $ccipath."/usr/bin/raidcom get ldev -ldev_list dp_volume -pool_id ".$poolid." -fx -I".$horcminst;
         my @results = runccicmd($ldevquery);
         my $ldev = "";
         my $virtualldev = "";
@@ -1301,7 +1306,7 @@ sub getdpldevs {
 sub getpgldevs {
     $log->info("Retrieve LDEV information for all PGs");
     foreach my $pg (@pgs) {
-        my $ldevquerycmd = "raidcom get ldev -ldev_list parity_grp -parity_grp_id ".$pg." -fx -I".$horcminst;
+        my $ldevquerycmd = $ccipath."/usr/bin/raidcom get ldev -ldev_list parity_grp -parity_grp_id ".$pg." -fx -I".$horcminst;
         my @results = runccicmd($ldevquerycmd);
         my $ldev = "";
         my $ldevcnt = 0;

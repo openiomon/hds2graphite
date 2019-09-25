@@ -65,6 +65,11 @@ my $stderropt = 'null';
 my %storage;
 my %rt_storage;
 
+# variables for automatic CCI installation
+
+my $preparecci = "";
+my $ccipath = '/opt/hds2graphite/cci/';
+my $cciimage = $ccipath.'RMHORC';
 
 sub console {
     my $message = shift;
@@ -88,6 +93,7 @@ sub printUsage {
     print("   -restart      <name or ALL>   restart for the service for the storagesystem\n");
     print("   -status       <name or ALL>   status of the service for the storagesystem\n");
     print("   -realtime                     if this option is specified actions (register, deregsiter, start, stop, enable, disable, status) \n");
+    print("   -preparecci                   this option will install and configure CCI to be used for hds2graphite \n");
     print("                                 will be performed for realtime collections services.\n");
     print("   -h                            print this output\n");
     print("\n");
@@ -105,6 +111,7 @@ sub parseCmdArgs {
                     "restart=s"         => \$restart,           # String
                     "status=s"          => \$status,            # String
                     "realtime"          => \$realtime,          # flag
+                    "preparecci"        => \$preparecci,        # flag
                     "h"                 => \$help)              # flag
     or die("Error in command line arguments\n");
 
@@ -123,7 +130,7 @@ sub parseCmdArgs {
         readconfig();
     }
 
-    if(($register eq "") && ($deregister eq "") && ($enable eq "") && ($disable eq "") && ($start eq "") && ($stop eq "") && ($restart eq "") && ($status eq "")) {
+    if(($register eq "") && ($deregister eq "") && ($enable eq "") && ($disable eq "") && ($start eq "") && ($stop eq "") && ($restart eq "") && ($status eq "") && ($preparecci eq "")) {
         printUsage();
         exit(1);
     }
@@ -563,6 +570,54 @@ sub servicestatus {
     }
 }
 
+sub preparecci {
+
+    $log->info("Preparing CCI configuration for hds2graphite use!");
+    $log->info("Installing CCI from image to ".$ccipath."HORCM\n");
+
+    # change working directory to CCI dir
+    
+
+    if(! -f $cciimage) {
+        $log->error("CCI image was not found at: ".$cciimage." Please check!");
+        exit(1);
+    }
+
+    chdir($ccipath);
+    my $cpiocmd = 'cpio -idmu <'.$cciimage;
+    my $rc = system($cpiocmd);
+
+    if($rc != 0) {
+        $log->error("CPIO ended abnormaly with returncode: ".$rc);
+        exit(1);
+    }
+
+    # create apath file
+    
+    my $apathfile = $ccipath.'HORCM/usr/bin/.APATH';
+    $log->info("Creating .APATH file in ".$apathfile);
+    open my $fh, '>', $apathfile or die $!;
+    close($fh);
+    
+    # change permission and ownership to openiomon user
+
+
+    $log->info("Changing rights and ownership of the CCI path ".$ccipath."HORCM to ".$serviceuser.":".$servicegroup);
+    my $chowncmd = 'chown -R '.$serviceuser.":".$servicegroup." ".$ccipath."HORCM";
+    $rc = system($chowncmd);
+    if($rc != 0) {
+        $log->error("CHOWN ended abnormaly with returncode: ".$rc);
+        exit(1);
+    }
+    my $chmodcmd = 'chmod -R u+w '.$ccipath."HORCM";
+    $rc = system($chmodcmd);
+    if($rc != 0) {
+        $log->error("CHMOD ended abnormaly with returncode: ".$rc);
+        exit(1);
+    }
+
+}
+
 
 # parse CLI parameters
 parseCmdArgs();
@@ -616,4 +671,8 @@ if($enable ne "") {
 
 if($disable ne "") {
     service($disable,'disable');
+}
+
+if($preparecci ne "") {
+    preparecci();
 }
