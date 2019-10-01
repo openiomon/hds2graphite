@@ -2,7 +2,7 @@ Summary: hds2graphite is a module of openiomon which is used to transfer statist
 Name: hds2graphite
 Version: 0.3
 prefix: /opt
-Release: 4
+Release: 5
 URL: http://www.openiomon.org
 License: GPL
 Group: Applications/Internet
@@ -54,6 +54,7 @@ mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/cci/
 mkdir -p ${RPM_BUILD_ROOT}/etc/logrotate.d/
 install -m 755 %{_builddir}/hds2graphite-%{version}/bin/* ${RPM_BUILD_ROOT}/opt/hds2graphite/bin/
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/*.conf ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/
+install -m 644 %{_builddir}/hds2graphite-%{version}/conf/*.example ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/metrics/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/metrics
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/templates/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/templates
 install -m 644 %{_builddir}/hds2graphite-%{version}/build/hds2graphite_logrotate ${RPM_BUILD_ROOT}/etc/logrotate.d/hds2graphite
@@ -89,6 +90,8 @@ rm -rf ${RPM_BUILD_ROOT}
 ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
 
 %changelog
+* Tue Oct 01 2019 Timo Drach <timo.drach@openiomon.org>
+- Added example go-carbon storageschema configfile
 * Wed Sep 25 2019 Timo Drach <timo.drach@openiomon.org>
 - Added cci folder to installation directory to allow deployment of CCI with hds2graphite --preparecci
 * Mon Sep 23 2019 Timo Drach <timo.drach@openiomon.org>
