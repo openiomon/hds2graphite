@@ -1733,7 +1733,7 @@ do {
         console("Starting Export Tool for serial: ".$serial.". This might take a few minutes...");
         $temptime = time;
         $exporttoolstatus = startexporttool();
-        logscriptstats("runtime.Export Tool",time-$temptime,$starttime,true);
+        logscriptstats("runtime.exporttool",time-$temptime,$starttime,true);
     }
 
     # Reading the metric file
