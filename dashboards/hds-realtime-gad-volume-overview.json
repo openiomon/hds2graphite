@@ -1,0 +1,506 @@
+{
+    "meta": {
+        "type": "db",
+        "canSave": true,
+        "canEdit": true,
+        "canAdmin": false,
+        "canStar": true,
+        "slug": "hds-realtime-gad-volume-overview",
+        "url": "/d/Oq9ay9Smk/hds-realtime-gad-volume-overview",
+        "expires": "0001-01-01T00:00:00Z",
+        "created": "2018-06-12T14:26:03+02:00",
+        "updated": "2018-11-22T14:05:14+01:00",
+        "updatedBy": "munokar",
+        "createdBy": "munokar",
+        "version": 10,
+        "hasAcl": false,
+        "isFolder": false,
+        "folderId": 176,
+        "folderTitle": "HDS",
+        "folderUrl": "/dashboards/f/qOOUz2pik/hds",
+        "provisioned": false,
+        "provisionedExternalId": ""
+    },
+    "dashboard": {
+        "annotations": {
+            "list": [
+                {
+                    "builtIn": 1,
+                    "datasource": "default",
+                    "enable": true,
+                    "hide": true,
+                    "iconColor": "rgba(0, 211, 255, 1)",
+                    "name": "Annotations & Alerts",
+                    "type": "dashboard"
+                }
+            ]
+        },
+        "editable": true,
+        "gnetId": null,
+        "graphTooltip": 0,
+        "id": null,
+        "iteration": 1542891799116,
+        "links": [
+
+        ],
+        "panels": [
+            {
+                "aliasColors": {
+
+                },
+                "bars": false,
+                "dashLength": 10,
+                "dashes": false,
+                "datasource": "default",
+                "fill": 1,
+                "gridPos": {
+                    "h": 10,
+                    "w": 11,
+                    "x": 0,
+                    "y": 0
+                },
+                "id": 2,
+                "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": false,
+                    "hideEmpty": false,
+                    "hideZero": false,
+                    "max": true,
+                    "min": false,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                },
+                "lines": true,
+                "linewidth": 1,
+                "links": [
+
+                ],
+                "nullPointMode": "connected",
+                "percentage": false,
+                "pointradius": 5,
+                "points": false,
+                "renderer": "flot",
+                "seriesOverrides": [
+
+                ],
+                "spaceLength": 10,
+                "stack": false,
+                "steppedLine": false,
+                "targets": [
+                    {
+                        "refCount": 0,
+                        "refId": "A",
+                        "target": "aliasByNode(hds.perf.virtual.$Type.$VSM.LDEV.DP.$Pool.$VLDEV.*.REALTIME_READ_IO_RATE, 9, 10)"
+                    },
+                    {
+                        "refCount": 0,
+                        "refId": "B",
+                        "target": "aliasByNode(hds.perf.virtual.$Type.$VSM.LDEV.DP.$Pool.$VLDEV.*.REALTIME_WRITE_IO_RATE, 9, 10)"
+                    }
+                ],
+                "thresholds": [
+
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Virtual LDEV Read / Write IOPS for $VLDEV on $VSM",
+                "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                },
+                "type": "graph",
+                "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": [
+
+                    ]
+                },
+                "yaxes": [
+                    {
+                        "format": "iops",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": "0",
+                        "show": true
+                    },
+                    {
+                        "format": "short",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": null,
+                        "show": true
+                    }
+                ],
+                "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                }
+            },
+            {
+                "aliasColors": {
+
+                },
+                "bars": false,
+                "dashLength": 10,
+                "dashes": false,
+                "datasource": "default",
+                "fill": 1,
+                "gridPos": {
+                    "h": 10,
+                    "w": 11,
+                    "x": 11,
+                    "y": 0
+                },
+                "id": 3,
+                "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": false,
+                    "hideEmpty": false,
+                    "hideZero": false,
+                    "max": true,
+                    "min": false,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                },
+                "lines": true,
+                "linewidth": 1,
+                "links": [
+
+                ],
+                "nullPointMode": "connected",
+                "percentage": false,
+                "pointradius": 5,
+                "points": false,
+                "renderer": "flot",
+                "seriesOverrides": [
+
+                ],
+                "spaceLength": 10,
+                "stack": false,
+                "steppedLine": false,
+                "targets": [
+                    {
+                        "refCount": 0,
+                        "refId": "A",
+                        "target": "aliasByNode(hds.perf.virtual.$Type.$VSM.LDEV.DP.$Pool.$VLDEV.*.REALTIME_READ_XFER_RATE, 9, 10)"
+                    },
+                    {
+                        "refCount": 0,
+                        "refId": "B",
+                        "target": "aliasByNode(hds.perf.virtual.$Type.$VSM.LDEV.DP.$Pool.$VLDEV.*.REALTIME_WRITE_XFER_RATE, 9, 10)"
+                    }
+                ],
+                "thresholds": [
+
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Virtual LDEV Read / Write Transfer for $VLDEV on $VSM",
+                "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                },
+                "type": "graph",
+                "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": [
+
+                    ]
+                },
+                "yaxes": [
+                    {
+                        "format": "MBs",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": "0",
+                        "show": true
+                    },
+                    {
+                        "format": "short",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": null,
+                        "show": true
+                    }
+                ],
+                "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                }
+            },
+            {
+                "aliasColors": {
+
+                },
+                "bars": false,
+                "dashLength": 10,
+                "dashes": false,
+                "datasource": "default",
+                "fill": 1,
+                "gridPos": {
+                    "h": 10,
+                    "w": 11,
+                    "x": 0,
+                    "y": 10
+                },
+                "id": 4,
+                "legend": {
+                    "alignAsTable": true,
+                    "avg": true,
+                    "current": false,
+                    "hideEmpty": false,
+                    "hideZero": false,
+                    "max": true,
+                    "min": false,
+                    "show": true,
+                    "total": false,
+                    "values": true
+                },
+                "lines": true,
+                "linewidth": 1,
+                "links": [
+
+                ],
+                "nullPointMode": "connected",
+                "percentage": false,
+                "pointradius": 5,
+                "points": false,
+                "renderer": "flot",
+                "seriesOverrides": [
+
+                ],
+                "spaceLength": 10,
+                "stack": false,
+                "steppedLine": false,
+                "targets": [
+                    {
+                        "refCount": 0,
+                        "refId": "A",
+                        "target": "aliasByNode(hds.perf.virtual.$Type.$VSM.LDEV.DP.$Pool.$VLDEV.*.REALTIME_READ_RESPONSE_RATE, 9, 10)"
+                    },
+                    {
+                        "refCount": 0,
+                        "refId": "B",
+                        "target": "aliasByNode(hds.perf.virtual.$Type.$VSM.LDEV.DP.$Pool.$VLDEV.*.REALTIME_WRITE_RESPONSE_RATE, 9, 10)"
+                    }
+                ],
+                "thresholds": [
+
+                ],
+                "timeFrom": null,
+                "timeShift": null,
+                "title": "Virtual LDEV Read / Write Latency for $VLDEV on $VSM",
+                "tooltip": {
+                    "shared": true,
+                    "sort": 0,
+                    "value_type": "individual"
+                },
+                "type": "graph",
+                "xaxis": {
+                    "buckets": null,
+                    "mode": "time",
+                    "name": null,
+                    "show": true,
+                    "values": [
+
+                    ]
+                },
+                "yaxes": [
+                    {
+                        "format": "µs",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": "0",
+                        "show": true
+                    },
+                    {
+                        "format": "short",
+                        "label": null,
+                        "logBase": 1,
+                        "max": null,
+                        "min": null,
+                        "show": true
+                    }
+                ],
+                "yaxis": {
+                    "align": false,
+                    "alignLevel": null
+                }
+            }
+        ],
+        "refresh": "5m",
+        "schemaVersion": 16,
+        "style": "dark",
+        "tags": [
+            "HDS",
+            "REALTIME"
+        ],
+        "templating": {
+            "list": [
+                {
+                    "allValue": null,
+                    "current": {
+                        "text": "g1500",
+                        "value": "g1500"
+                    },
+                    "datasource": "default",
+                    "hide": 0,
+                    "includeAll": false,
+                    "label": null,
+                    "multi": false,
+                    "name": "Type",
+                    "options": [
+
+                    ],
+                    "query": "hds.perf.virtual.*",
+                    "refresh": 1,
+                    "regex": "",
+                    "skipUrlSync": false,
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [
+
+                    ],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                },
+                {
+                    "allValue": null,
+                    "current": {
+                        "text": "VSP01_02",
+                        "value": "VSP01_02"
+                    },
+                    "datasource": "default",
+                    "hide": 0,
+                    "includeAll": false,
+                    "label": null,
+                    "multi": false,
+                    "name": "VSM",
+                    "options": [
+
+                    ],
+                    "query": "hds.perf.virtual.$Type.*",
+                    "refresh": 1,
+                    "regex": "",
+                    "skipUrlSync": false,
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [
+
+                    ],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                },
+                {
+                    "allValue": null,
+                    "current": {
+                        "text": "000",
+                        "value": "000"
+                    },
+                    "datasource": "default",
+                    "hide": 0,
+                    "includeAll": false,
+                    "label": null,
+                    "multi": false,
+                    "name": "Pool",
+                    "options": [
+
+                    ],
+                    "query": "hds.perf.virtual.$Type.$VSM.LDEV.DP.*",
+                    "refresh": 1,
+                    "regex": "",
+                    "skipUrlSync": false,
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [
+
+                    ],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                },
+                {
+                    "allValue": null,
+                    "current": {
+                        "text": "00:70:62",
+                        "value": "00:70:62"
+                    },
+                    "datasource": "default",
+                    "hide": 0,
+                    "includeAll": false,
+                    "label": null,
+                    "multi": false,
+                    "name": "VLDEV",
+                    "options": [
+
+                    ],
+                    "query": "hds.perf.virtual.$Type.$VSM.LDEV.DP.$Pool.*",
+                    "refresh": 1,
+                    "regex": "",
+                    "skipUrlSync": false,
+                    "sort": 0,
+                    "tagValuesQuery": "",
+                    "tags": [
+
+                    ],
+                    "tagsQuery": "",
+                    "type": "query",
+                    "useTags": false
+                }
+            ]
+        },
+        "time": {
+            "from": "now-3h",
+            "to": "now"
+        },
+        "timepicker": {
+            "refresh_intervals": [
+                "5s",
+                "10s",
+                "30s",
+                "1m",
+                "5m",
+                "15m",
+                "30m",
+                "1h",
+                "2h",
+                "1d"
+            ],
+            "time_options": [
+                "5m",
+                "15m",
+                "1h",
+                "6h",
+                "12h",
+                "24h",
+                "2d",
+                "7d",
+                "30d"
+            ]
+        },
+        "timezone": "",
+        "title": "HDS: Realtime GAD Volume Overview",
+        "uid": "Oq9ay9Smk",
+        "version": 10
+    },
+    "overwrite": true
+}
