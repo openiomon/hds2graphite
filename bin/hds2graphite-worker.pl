@@ -311,6 +311,18 @@ sub isPanama2 {
     }
 }
 
+# sub will check if system is VSP 5100 or VSP 5500
+
+sub is5000series {
+    my $type = $_[0];
+    $type = uc($type);
+    given($type) {
+        when ("5100") {return true}
+        when ("5500") {return true}
+        default {return false}
+    }
+}
+
 # Sub will read the configfile
 
 sub readconfig {
@@ -901,7 +913,7 @@ sub startexporttool {
 
     if(!$pid) {
         # All G1x00/F1x00 and Gx00/Fx00 systems are handled identical
-        if (($arraytype{$serial} eq "g1000")||($arraytype{$serial} eq "g1500")||isPanama($arraytype{$serial}) || isPanama2($arraytype{$serial})) {
+        if (($arraytype{$serial} eq "g1000")||($arraytype{$serial} eq "g1500")||isPanama($arraytype{$serial}) || isPanama2($arraytype{$serial}) || is5000series($arraytype{$serial})) {
             $classpath = $exporttoolpath.$arraytype{$serial}."/lib/JSanExportLoader.jar";
             # The variale $javacmd is only needed to to write the call in the log
             my $javacmd = "/usr/bin/java -classpath \"".$classpath."\" -Del.tool.Xmx=536870912 -Dmd.command=".$cmdfile." -Del.logpath=".$exporttoollog."  -Dmd.rmitimeout=20 sanproject.getexptool.RJElMain";
