@@ -2,7 +2,7 @@ Summary: hds2graphite is a module of openiomon which is used to transfer statist
 Name: hds2graphite
 Version: 0.3
 prefix: /opt
-Release: 5
+Release: 6
 URL: http://www.openiomon.org
 License: GPL
 Group: Applications/Internet
@@ -50,6 +50,8 @@ mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g900/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g700/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g370/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g350/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5500/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5100/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/cci/
 mkdir -p ${RPM_BUILD_ROOT}/etc/logrotate.d/
 install -m 755 %{_builddir}/hds2graphite-%{version}/bin/* ${RPM_BUILD_ROOT}/opt/hds2graphite/bin/
@@ -90,6 +92,8 @@ rm -rf ${RPM_BUILD_ROOT}
 ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
 
 %changelog
+* Tue Mar 02 2021 Timo Drach <timo.drach@openiomon.org>
+- Added support for VSP 5000 series
 * Tue Oct 01 2019 Timo Drach <timo.drach@openiomon.org>
 - Added example go-carbon storageschema configfile
 * Wed Sep 25 2019 Timo Drach <timo.drach@openiomon.org>
