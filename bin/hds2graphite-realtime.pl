@@ -603,7 +603,7 @@ sub initsocket {
         PeerPort => $graphite_port,
         Proto => 'tcp',
         );
-        die "cannot connect to the server $!\n" unless $socket;
+        $log->logdie("cannot connect to the server $!") unless $socket;
         setsockopt($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
         $log->debug("Opening connection ".$socket->sockhost().":".$socket->sockport()." => ".$socket->peerhost().":".$socket->peerport());
 }
