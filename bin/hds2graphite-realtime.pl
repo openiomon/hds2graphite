@@ -8,6 +8,9 @@
 use v5.10;
 use strict;
 use warnings;
+#no warnings qw( experimental::smartmatch );
+use feature qw(switch);
+no if $] >= 5.018, warnings => qw( experimental::smartmatch );
 use constant false => 0;
 use constant true  => 1;
 
@@ -23,7 +26,7 @@ use Time::HiRes qw(nanosleep usleep gettimeofday tv_interval);
 use Time::Piece;
 
 
-my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
+my $ua; # = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
 
 my $htnm_server = '';
 my $htnm_port = '';
@@ -35,9 +38,11 @@ my $htnm_rest_base_url = '';
 
 my $graphite_host = '';
 my $graphite_port = '';
+my $usetag = 0;
+my $ssl_verify = 1;
 
 my $socketcnt = 0;
-my $sockettimer;
+my $sockettimer = 0;
 my $maxmetricsperminute = 500000;
 my $socketdelay = 10000;
 my $delaymetric = 100;
@@ -180,8 +185,14 @@ sub readconfig {
                         } elsif ($configline =~ "port") {
                             $graphite_port = $values[1];
                             $graphite_port =~ s/\s//g;
+                        } elsif ($configline =~"^metric_format") {
+                            $configline =~ s/\s//g;
+                            my @values = split("=",$configline);
+                            if($values[1] =~ "graphite-tag") {
+                                $usetag = 1;
+                            }
                         }
-                                        }
+		    }
                     when ("realtime") {
                         my @values = split("=",$configline);
                         if($configline =~ "realtime_application") {
@@ -202,7 +213,10 @@ sub readconfig {
                         } elsif ($configline =~ "api_passwd") {
                             $htnm_passwd = $values[1];
                             $htnm_passwd =~s/\s//g;
-                        }
+                        } elsif ($configline =~ "^ssl_verfiy_host") {
+							$ssl_verify = $values[1];
+							$ssl_verify =~s/\s//g;
+						}
                     }
                     when ("performance") {
                         my @values = split ("=",$configline);
@@ -252,7 +266,9 @@ sub readconfig {
                                 $configline =~ s/\s//g;
                                 my @values = split ("=",$configline);
                                 $maxmetricsperminute = $values[1];
-                            }
+                            } elsif ($configline =~ "ssl_verfiy_host") {
+								$arrays{$conf_storagename}{"ssl_verfiy_host"} = $values[1];
+							}
                     }
                 }
             }
@@ -291,6 +307,9 @@ sub setdefaults {
     if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
                 $htnm_passwd = $arrays{$storagename}{"realtime_api_passwd"};
         }
+	if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
+        $ssl_verify = $arrays{$storagename}{"ssl_verfiy_host"};
+    }
 }
 
 sub http_get {
@@ -299,7 +318,8 @@ sub http_get {
     $req->header('Content-Type' => 'application/json');
     $req->authorization_basic($htnm_user,$htnm_passwd);
     my $curlcmd = 'curl -ks -X GET -H "Content-Type: application/json" -u '.$htnm_user.':'.$htnm_passwd.' -i '.$geturl;
-    $log->debug($curlcmd);
+	my $debugcmd = 'curl -ks -X GET -H "Content-Type: application/json" -u '.$htnm_user.':xxxxxxxxx'.' -i '.$geturl;
+    $log->debug($debugcmd);
     my $resp = $ua->request($req);
     if ($resp->is_success) {
         my $responsecontent = $resp->decoded_content;
@@ -430,27 +450,41 @@ sub reportmetric {
                     my @values = split(",",$line);
                     my @labels = @{$labels{$unit}};
                     my $labelcontent="";
+					my $taglabel;
                     for(my $i=0;$i<scalar(@labels);$i+=1) {
                         my $label = $labels[$i];
                         if($i==0) {
                             if(defined $header{$label}{"position"}) {
-                                $labelcontent=$values[$header{$label}{"position"}];
+								if($usetag) {
+									$taglabel=lc($label).'='.$values[$header{$label}{"position"}];
+								} 
+	                            $labelcontent=$values[$header{$label}{"position"}];
                             } else {
-                                $labelcontent=$label;
+								if($usetag) {
+									$taglabel='label='.$label;
+								}
+	                            $labelcontent=$label;
                             }
                         } else {
                             if(defined $header{$label}{"position"}) {
-                                $labelcontent.='.'.$values[$header{$label}{"position"}];
+								if($usetag) {
+									$taglabel.=';'.lc($label).'='.$values[$header{$label}{"position"}];
+								}
+	                            $labelcontent.='.'.$values[$header{$label}{"position"}];
                             } else {
-                                $labelcontent.='.'.$label;
+								if($usetag) {
+                                    $taglabel='label='.$label;
+                                }
+	                            $labelcontent.='.'.$label;
                             }
                         }
                         $labelcontent =~s/\"//g;
+						$taglabel =~s/\"//g;
                     }
                     foreach my $metric (@{$metrics{$unit}}) {
                         my $metric_value = $values[$header{$metric}{"position"}];
                         my $metric_unit = $header{$metric}{"unit"};
-                        if ($metric_unit eq "float") {
+                        if (($metric_unit eq "float") || ($metric_unit eq "double")) {
                             my @numberparts = split('E',$metric_value);
                             my $basenumber = $numberparts[0];
                             my $power = $numberparts[1];
@@ -479,24 +513,37 @@ sub reportmetric {
                             my $mp_id = $ldevs{$labelcontent}{'mp_id'};
                             if ($parity_grp ne '') {
                                 $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.PG.'.$parity_grp.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
+								if($usetag) {
+									$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';type=pg;pg_id='.$parity_grp.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+								}
                             } else {
                                 if($pool_id ne '') {
                                     $pool_id = sprintf("%03d",$pool_id);
                                     $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.DP.'.$pool_id.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
                                     my $mpmetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.PRCS.'.$mp_id.'.LDEV.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-                                    toGraphite($mpmetric);
+				    				if($usetag) {
+										$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';mp_id='.$mp_id.';type=dp;pool_id='.$pool_id.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+				    				}
                                     if($ldevs{$labelcontent}{'vldev_id'} ne '') {
                                         my $virt_ldev = $ldevs{$labelcontent}{'vldev_id'};
                                         my $virt_storage_sn = $ldevs{$labelcontent}{'vsn'};
+										$log->trace("Found virtual ldev: ".$virt_ldev." from serial: ".$virt_storage_sn);
                                         my $virt_storage_name = $vsms{$storagename}{$virt_storage_sn}{'name'};
                                         my $virt_storage_type = $vsms{$storagename}{$virt_storage_sn}{'type'};
                                         my $virtmetric = 'hds.perf.virtual.'.$virt_storage_type.'.'.$virt_storage_name.'.'.$target.'.DP.'.$pool_id.'.'.$virt_ldev.'.'.$storagename.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
+										if($usetag) {
+											$virtmetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=virtual;storagetype='.$virt_storage_type.';storagename='.$virt_storage_name.';type=dp;pool_id='.$pool_id.';'.$taglabel.';phys_storagename='.$storagename.' '.$metric_value.' '.$graphitetime;
+										}
                                         toGraphite($virtmetric);
                                     }
                                 }
                             }
                         } else {
                             $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
+							if($usetag) {
+								$labelcontent =~ s/\./_/g;
+								$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';unit='.$target.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+							}
                         }
                         toGraphite($graphitemetric);
                         $interval = $values[$header{"INTERVAL"}{"position"}];
@@ -517,6 +564,11 @@ sub initializereporter {
     $storagetype = $arrays{$storagename}{"type"};
     $instance = $htnm_agents{$serial}{"instanceName"};
     $instance_hostname = $htnm_agents{$serial}{"hostName"};
+    if($instance eq "" or $instance_hostname eq "") {
+	$log->error("No HTNM / HIAA / Analyzer Instance found for ".$storagename."! Please check");
+	stopservice();
+	exit(1);	
+    }
     my $metricfile = $metricpath.'/'.$storagetype.'_realtime_metrics.conf';
 
     if(!-e $metricfile) {
@@ -695,6 +747,13 @@ my $log4perlConf  = qq(
 
 Log::Log4perl->init(\$log4perlConf);
 $log = Log::Log4perl->get_logger('main.report');
+
+if($ssl_verify == 0) {
+    $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0, SSL_verify_mode=>0x00 });
+} else {
+    $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 1 });
+}
+
 initservice();
 servicestatus('Getting agents...');
 alive();
