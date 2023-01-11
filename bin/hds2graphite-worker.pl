@@ -330,7 +330,7 @@ sub is5000series {
     given($type) {
         when ("5100") {return true}
         when ("5200") {return true}
-        when ("5100") {return true}
+        when ("5500") {return true}
         when ("5600") {return true}
         default {return false}
     }
@@ -566,11 +566,11 @@ sub readconfig {
                             $grap_port =~ s/\s//g;
                             $graphiteconf{$arrayserial}{"graphite_port"} = $grap_port;
                         } elsif ($configline =~ "metric_format") {
-			    my @values = split ("=",$configline);
-			    my $metricformat = $values[1];
- 			    $metricformat  =~ s/\s//g;
-			    $graphiteconf{$arrayserial}{"metric_format"} = $metricformat;
-			} elsif ($configline =~ "max_metrics_per_minute") {
+			                my @values = split ("=",$configline);
+			                my $metricformat = $values[1];
+ 			                $metricformat  =~ s/\s//g;
+			                $graphiteconf{$arrayserial}{"metric_format"} = $metricformat;
+			            } elsif ($configline =~ "max_metrics_per_minute") {
                             my @values = split ("=",$configline);
                             my $max_metrics_per_minute = $values[1];
                             $max_metrics_per_minute =~ s/\s//g;

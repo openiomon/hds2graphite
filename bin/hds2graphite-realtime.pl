@@ -93,7 +93,7 @@ sub printUsage {
 }
 
 sub parseCmdArgs {
-        my $help = "";
+    my $help = "";
     my $conf = "";
     $storagename = "";
         GetOptions (    "conf=s"                => \$conf,              # String
