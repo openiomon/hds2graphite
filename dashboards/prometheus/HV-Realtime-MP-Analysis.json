@@ -1,0 +1,426 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS-TEST",
+      "label": "Prometheus-Test",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": [],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "8.5.6"
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Multiprocessor Details - Realtime data based on Ops Center Analyzer REST API",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1673424350285,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 11,
+      "panels": [],
+      "title": "MP Utilization Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-TEST}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "interval": "5m",
+      "options": {
+        "legend": {
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "MP",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-TEST}"
+          },
+          "editorMode": "code",
+          "expr": "((hv_ldev_realtime_read_io_rate{entity=\"physical\", storagename=\"$System\", storagetype=\"$Type\", mp_id=\"$MP\"} + hv_ldev_realtime_write_io_rate{entity=\"physical\", storagename=\"$System\", storagetype=\"$Type\", mp_id=\"$MP\"}) > 1)",
+          "legendFormat": "{{ldev_number}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Average MP Utilization by LDEV for $MP",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-TEST}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 0,
+        "y": 11
+      },
+      "id": 3,
+      "interval": "5m",
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.5.6",
+      "repeat": "MP",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-TEST}"
+          },
+          "editorMode": "code",
+          "expr": "hv_prcs_realtime_max_processor_busy_rate{entity=\"physical\", storagename=\"$System\", storagetype=\"$Type\", processor_id=\"_Total\", adaptor_id=~\"$MP\"}",
+          "legendFormat": "{{ldev_number}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Average Utilization for $MP",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 19,
+      "panels": [],
+      "title": "MP Details",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS-TEST}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "percent"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 0,
+        "y": 22
+      },
+      "id": 20,
+      "interval": "5m",
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "mean",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "sortBy": "Mean",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "repeat": "MP",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS-TEST}"
+          },
+          "editorMode": "code",
+          "expr": "((hv_ldev_realtime_read_io_rate{entity=\"physical\", storagename=\"$System\", storagetype=\"$Type\", mp_id=\"$MP\"} + hv_ldev_realtime_write_io_rate{entity=\"physical\", storagename=\"$System\", storagetype=\"$Type\", mp_id=\"$MP\"}) > 1)",
+          "legendFormat": "{{ldev_number}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "$MP: LDEV to Utilization Mapping",
+      "type": "timeseries"
+    }
+  ],
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": [
+    "Hitachi Vantara",
+    "Realtime"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-TEST}"
+        },
+        "definition": "label_values(hv_ldev_realtime_read_io_rate,storagetype)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "Type",
+        "options": [],
+        "query": {
+          "query": "label_values(hv_ldev_realtime_read_io_rate,storagetype)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-TEST}"
+        },
+        "definition": "label_values(hv_ldev_realtime_read_io_rate{storagetype=~\"$Type\", entity=\"physical\"},storagename)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "System",
+        "options": [],
+        "query": {
+          "query": "label_values(hv_ldev_realtime_read_io_rate{storagetype=~\"$Type\", entity=\"physical\"},storagename)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS-TEST}"
+        },
+        "definition": "label_values(hv_ldev_realtime_read_io_rate{storagetype=~\"$Type\", entity=\"physical\"},mp_id)",
+        "description": "Multiprocessor",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "MP",
+        "options": [],
+        "query": {
+          "query": "label_values(hv_ldev_realtime_read_io_rate{storagetype=~\"$Type\", entity=\"physical\"},mp_id)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "HV: Realtime MP Analysis",
+  "uid": "l9CDNV24k",
+  "version": 8,
+  "weekStart": ""
+}

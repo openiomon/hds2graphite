@@ -1,0 +1,1437 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_LOCALGRAPHITE",
+      "label": "LocalGraphite",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "graphite",
+      "pluginName": "Graphite"
+    }
+  ],
+  "__elements": [],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "8.5.6"
+    },
+    {
+      "type": "panel",
+      "id": "grafana-piechart-panel",
+      "name": "Pie Chart (old)",
+      "version": "1.6.2"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph (old)",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "graphite",
+      "name": "Graphite",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table-old",
+      "name": "Table (old)",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Global Active Device - Virtual Storage Machine Details - Realtime data based on Ops Center Analyzer REST API",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "iteration": 1673425084262,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "000000001"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "panels": [],
+      "title": "VSM Overview",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "hiddenSeries": false,
+      "id": 4,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "max": true,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.6",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "refId": "A",
+          "target": "sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.*.*.*.*.REALT*_IO_RATE, 8, 10)"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Total amount of IOPS per Site for $VSM",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:4474",
+          "format": "iops",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:4475",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "hiddenSeries": false,
+      "id": 23,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "max": true,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.6",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refId": "A",
+          "target": "aliasByNode(sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.*.*.*.*.REALT*_XFER_RATE, 8, 10), 8)",
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Total transfer per Site for $VSM",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:4625",
+          "format": "MBs",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:4626",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "collapsed": true,
+      "datasource": {
+        "type": "graphite",
+        "uid": "000000001"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 7,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 11,
+            "x": 0,
+            "y": 11
+          },
+          "hiddenSeries": false,
+          "id": 9,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.6",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.DP.000.*.*.REALTIME_READ_IO_RATE, 8), 8)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Read  I/O distribution for $VSM",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "$$hashKey": "object:4693",
+              "format": "iops",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "$$hashKey": "object:4694",
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fontSize": "80%",
+          "format": "iops",
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 11,
+            "y": 11
+          },
+          "id": 12,
+          "legend": {
+            "show": true,
+            "values": true
+          },
+          "legendType": "On graph",
+          "links": [],
+          "maxDataPoints": 3,
+          "nullPointMode": "connected",
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.*.*.*.*.REALTIME_READ_IO_RATE, 8), 8)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Current Read I/O Distribution",
+          "type": "grafana-piechart-panel",
+          "valueName": "current"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 10,
+            "x": 14,
+            "y": 11
+          },
+          "hiddenSeries": false,
+          "id": 10,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.6",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.DP.000.*.*.REALTIME_WRITE_IO_RATE, 8), 8)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Write I/O distribution for $VSM",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "iops",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fontSize": "80%",
+          "format": "iops",
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 11,
+            "y": 16
+          },
+          "id": 13,
+          "legend": {
+            "show": true,
+            "values": true
+          },
+          "legendType": "On graph",
+          "links": [],
+          "maxDataPoints": 3,
+          "nullPointMode": "connected",
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.*.*.*.*.REALTIME_WRITE_IO_RATE, 8), 8)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Current Write I/O Distribution",
+          "type": "grafana-piechart-panel",
+          "valueName": "current"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 11,
+            "x": 0,
+            "y": 21
+          },
+          "hiddenSeries": false,
+          "id": 14,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.6",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.DP.000.*.*.REALTIME_READ_XFER_RATE, 8), 8)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Read transfer distribution for $VSM",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "MBs",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fontSize": "80%",
+          "format": "KBs",
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 11,
+            "y": 21
+          },
+          "id": 16,
+          "legend": {
+            "show": true,
+            "values": true
+          },
+          "legendType": "On graph",
+          "links": [],
+          "maxDataPoints": 3,
+          "nullPointMode": "connected",
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.*.*.*.*.REALTIME_READ_XFER_RATE, 8), 8)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Current Read transfer Distribution",
+          "type": "grafana-piechart-panel",
+          "valueName": "current"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 10,
+            "x": 14,
+            "y": 21
+          },
+          "hiddenSeries": false,
+          "id": 15,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.6",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.DP.000.*.*.REALTIME_WRITE_XFER_RATE, 8), 8)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Write transfer distribution for $VSM",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "MBs",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fontSize": "80%",
+          "format": "KBs",
+          "gridPos": {
+            "h": 5,
+            "w": 3,
+            "x": 11,
+            "y": 26
+          },
+          "id": 17,
+          "legend": {
+            "show": true,
+            "values": true
+          },
+          "legendType": "On graph",
+          "links": [],
+          "maxDataPoints": 3,
+          "nullPointMode": "connected",
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.*.*.*.*.WRITE_TRANSFER, 8), 8)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Average Write Transfer Distribution",
+          "type": "grafana-piechart-panel",
+          "valueName": "avg"
+        }
+      ],
+      "title": "VSM IO Read / Write Details",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "000000001"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
+      },
+      "id": 21,
+      "panels": [],
+      "title": "VSM Port Details",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 12
+      },
+      "hiddenSeries": false,
+      "id": 22,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "max": true,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.6",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "refId": "A",
+          "target": "aliasByNode(hds.perf.physical.*.$System.PORT.$Port.REALTIME_AVG_IO_RATE, 4, 6)"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Port IOPS for $VSM",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:4909",
+          "format": "iops",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:4910",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 12
+      },
+      "hiddenSeries": false,
+      "id": 19,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "max": true,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.6",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "refId": "A",
+          "target": "aliasByNode(hds.perf.physical.*.$System.PORT.$Port.REALTIME_AVG_XFER_RATE, 4, 6)"
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Port Transfer for $VSM",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:4813",
+          "format": "MBs",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:4814",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 12
+      },
+      "hiddenSeries": false,
+      "id": 24,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.6",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "repeatDirection": "h",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refId": "A",
+          "target": "aliasByNode(averageSeriesWithWildcards(hds.perf.physical.*.$System.PORT.$Port.LATENCY, 2, 2), 3, 5)",
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Port Latency for $VSM",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:4845",
+          "format": "µs",
+          "logBase": 1,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:4846",
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "000000001"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 26,
+      "panels": [],
+      "title": "LDEV Overview",
+      "type": "row"
+    },
+    {
+      "columns": [
+        {
+          "$$hashKey": "object:5189",
+          "text": "Avg",
+          "value": "avg"
+        },
+        {
+          "$$hashKey": "object:5190",
+          "text": "Max",
+          "value": "max"
+        }
+      ],
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 22
+      },
+      "id": 28,
+      "links": [],
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 1,
+        "desc": true
+      },
+      "styles": [
+        {
+          "$$hashKey": "object:5193",
+          "alias": "Time",
+          "align": "auto",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "$$hashKey": "object:5194",
+          "alias": "",
+          "align": "auto",
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "link": true,
+          "linkTargetBlank": true,
+          "linkTooltip": "Details for LDEV ${__cell_0}",
+          "linkUrl": "/d/Oq9ay9Smk/hds-realtime-gad-volume-overview?refresh=5m&orgId=1&var-Type=g1500&var-VSM=$VSM&var-Pool=*&var-VLDEV=${__cell_0}",
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "iops"
+        }
+      ],
+      "targets": [
+        {
+          "refId": "A",
+          "target": "aliasByNode(highestAverage(sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.*.*.*.*.REALTIME_*IO_RATE, 9, 10), 10), 8)",
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        }
+      ],
+      "title": "Top 10 LDEV with highest avg IOPS",
+      "transform": "timeseries_aggregations",
+      "type": "table-old"
+    },
+    {
+      "columns": [
+        {
+          "text": "Avg",
+          "value": "avg"
+        },
+        {
+          "text": "Max",
+          "value": "max"
+        },
+        {
+          "text": "Current",
+          "value": "current"
+        }
+      ],
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 22
+      },
+      "id": 29,
+      "links": [],
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 1,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "align": "auto",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "align": "auto",
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "MBs"
+        }
+      ],
+      "targets": [
+        {
+          "refId": "A",
+          "target": "aliasByNode(highestAverage(sumSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.*.*.*.*.REALTIM*XFER_RATE, 9, 10), 10), 8)",
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        }
+      ],
+      "title": "Top 10 LDEV with highest avg Throughput",
+      "transform": "timeseries_aggregations",
+      "type": "table-old"
+    },
+    {
+      "columns": [
+        {
+          "$$hashKey": "object:5283",
+          "text": "Avg",
+          "value": "avg"
+        },
+        {
+          "$$hashKey": "object:5284",
+          "text": "Max",
+          "value": "max"
+        },
+        {
+          "$$hashKey": "object:5285",
+          "text": "Current",
+          "value": "current"
+        }
+      ],
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 22
+      },
+      "id": 30,
+      "links": [],
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 1,
+        "desc": true
+      },
+      "styles": [
+        {
+          "$$hashKey": "object:5289",
+          "alias": "Time",
+          "align": "auto",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "$$hashKey": "object:5290",
+          "alias": "",
+          "align": "auto",
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "µs"
+        }
+      ],
+      "targets": [
+        {
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "refId": "A",
+          "target": "aliasByNode(highestAverage(averageSeriesWithWildcards(hds.perf.virtual.*.$VSM.LDEV.*.*.*.*.REALTIME_*RESPONSE_RATE, 9, 10), 10), 8)"
+        }
+      ],
+      "title": "Top 10 LDEV with highest avg Latency",
+      "transform": "timeseries_aggregations",
+      "type": "table-old"
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": [
+    "HDS",
+    "REALTIME"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "graphite",
+          "uid": "${DS_LOCALGRAPHITE}"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "VSM",
+        "options": [],
+        "query": "hds.perf.virtual.*.*",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "graphite",
+          "uid": "${DS_LOCALGRAPHITE}"
+        },
+        "definition": "",
+        "hide": 2,
+        "includeAll": true,
+        "multi": false,
+        "name": "Port",
+        "options": [],
+        "query": "hds.perf.virtual.*.$VSM.LU.*",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "graphite",
+          "uid": "${DS_LOCALGRAPHITE}"
+        },
+        "definition": "",
+        "hide": 2,
+        "includeAll": true,
+        "multi": false,
+        "name": "System",
+        "options": [],
+        "query": "hds.perf.virtual.*.$VSM.LU.$Port.*.*.*",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "HDS: Realtime GAD VSM Details",
+  "uid": "vYShMRYmz",
+  "version": 14,
+  "weekStart": ""
+}

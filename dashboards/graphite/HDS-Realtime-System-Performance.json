@@ -1,0 +1,2502 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_LOCALGRAPHITE",
+      "label": "LocalGraphite",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "graphite",
+      "pluginName": "Graphite"
+    }
+  ],
+  "__elements": [],
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "8.5.6"
+    },
+    {
+      "type": "panel",
+      "id": "grafana-piechart-panel",
+      "name": "Pie Chart (old)",
+      "version": "1.6.2"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph (old)",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "graphite",
+      "name": "Graphite",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table-old",
+      "name": "Table (old)",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "graphite",
+          "uid": "${DS_LOCALGRAPHITE}"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Realtime data based on Ops Center Analyzer REST API",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1673425440802,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "000000001"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 28,
+      "panels": [],
+      "title": "System IOPS and Throughput",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "hiddenSeries": false,
+      "id": 4,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "HDS: Port Details",
+          "url": "dashboard/db/hds-port-details?$__url_time_range&$__all_variables"
+        }
+      ],
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.6",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "hide": false,
+          "refId": "A",
+          "target": "alias(sumSeries(hds.perf.physical.*.$System.PORT.*.REALTIME_AVG_IO_RATE), '$System')",
+          "textEditor": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Total System IOPS for $System",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "iops",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "hiddenSeries": false,
+      "id": 5,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "HDS: Port Details",
+          "url": "dashboard/db/hds-port-details?$__url_time_range&$__all_variables"
+        }
+      ],
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.6",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "refCount": 0,
+          "refId": "B",
+          "target": "alias(sumSeries(hds.perf.physical.*.$System.PORT.*.REALTIME_AVG_XFER_RATE), '$System')",
+          "textEditor": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "Total System Throughput for $System",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "MBs",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 0,
+        "y": 11
+      },
+      "hiddenSeries": false,
+      "id": 39,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "HDS: Port Details",
+          "url": "dashboard/db/hds-port-details?$__url_time_range&$__all_variables"
+        }
+      ],
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.6",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "A",
+          "target": "alias(hds.perf.physical.*.$System.SYSTEM.LDA.REALTIME_READ_IO_RATE, 'READ_IO_RATE')",
+          "textEditor": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "B",
+          "target": "alias(hds.perf.physical.*.$System.SYSTEM.LDA.REALTIME_WRITE_IO_RATE, 'WRITE_IO_RATE')",
+          "textEditor": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "READ / WRITE IOPS for $System",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "iops",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "breakPoint": "50%",
+      "combine": {
+        "label": "Others",
+        "threshold": 0
+      },
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fontSize": "80%",
+      "format": "short",
+      "gridPos": {
+        "h": 10,
+        "w": 4,
+        "x": 8,
+        "y": 11
+      },
+      "id": 42,
+      "legend": {
+        "percentage": true,
+        "show": true,
+        "values": true
+      },
+      "legendType": "On graph",
+      "links": [],
+      "maxDataPoints": 3,
+      "nullPointMode": "connected",
+      "pieType": "pie",
+      "strokeWidth": 1,
+      "targets": [
+        {
+          "refCount": 0,
+          "refId": "A",
+          "target": "alias(hds.perf.physical.*.$System.SYSTEM.LDA.REALTIME_READ_IO_RATE, 'READ_IO_RATE')",
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        },
+        {
+          "refCount": 0,
+          "refId": "B",
+          "target": "alias(hds.perf.physical.*.$System.SYSTEM.LDA.REALTIME_WRITE_IO_RATE, 'WRITE_IO_RATE')",
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        }
+      ],
+      "title": "READ/WRITE IO Ratio for $System",
+      "type": "grafana-piechart-panel",
+      "valueName": "current"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 10,
+        "w": 8,
+        "x": 12,
+        "y": 11
+      },
+      "hiddenSeries": false,
+      "id": 40,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "HDS: Port Details",
+          "url": "dashboard/db/hds-port-details?$__url_time_range&$__all_variables"
+        }
+      ],
+      "nullPointMode": "connected",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "8.5.6",
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "A",
+          "target": "alias(hds.perf.physical.*.$System.SYSTEM.LDA.REALTIME_READ_XFER_RATE, 'READ_IO_RATE')",
+          "textEditor": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "B",
+          "target": "alias(hds.perf.physical.*.$System.SYSTEM.LDA.REALTIME_WRITE_XFER_RATE, 'WRITE_IO_RATE')",
+          "textEditor": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        }
+      ],
+      "thresholds": [],
+      "timeRegions": [],
+      "title": "READ / WRITE Throughput for $System",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "mode": "time",
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "MBs",
+          "logBase": 1,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false
+      }
+    },
+    {
+      "aliasColors": {},
+      "breakPoint": "50%",
+      "combine": {
+        "label": "Others",
+        "threshold": 0
+      },
+      "datasource": {
+        "type": "graphite",
+        "uid": "${DS_LOCALGRAPHITE}"
+      },
+      "fontSize": "80%",
+      "format": "short",
+      "gridPos": {
+        "h": 10,
+        "w": 4,
+        "x": 20,
+        "y": 11
+      },
+      "id": 43,
+      "legend": {
+        "percentage": true,
+        "show": true,
+        "values": true
+      },
+      "legendType": "On graph",
+      "links": [],
+      "maxDataPoints": 3,
+      "nullPointMode": "connected",
+      "pieType": "pie",
+      "strokeWidth": 1,
+      "targets": [
+        {
+          "refCount": 0,
+          "refId": "A",
+          "target": "alias(hds.perf.physical.*.$System.SYSTEM.LDA.REALTIME_READ_XFER_RATE, 'READ_IO_RATE')",
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        },
+        {
+          "refCount": 0,
+          "refId": "B",
+          "target": "alias(hds.perf.physical.*.$System.SYSTEM.LDA.REALTIME_WRITE_XFER_RATE, 'WRITE_IO_RATE')",
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          }
+        }
+      ],
+      "title": "READ/WRITE Throughput Ratio for $System",
+      "type": "grafana-piechart-panel",
+      "valueName": "current"
+    },
+    {
+      "collapsed": true,
+      "datasource": {
+        "type": "graphite",
+        "uid": "000000001"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 29,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 10,
+            "x": 0,
+            "y": 22
+          },
+          "hiddenSeries": false,
+          "id": 3,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": true,
+            "show": true,
+            "sort": "min",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "HDS: Multiprocessors Details",
+              "url": "dashboard/db/hds-multiprocessors-details?$__url_time_range&$__all_variables"
+            }
+          ],
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.6",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {}
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "hide": false,
+              "refId": "A",
+              "target": "aliasByNode(sortByMaxima(hds.perf.physical.*.$System.PRCS.*._Total.REALTIME_PROCESSOR_BUSY_RATE), 6)",
+              "textEditor": false,
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "warning",
+              "fill": true,
+              "line": true,
+              "op": "gt",
+              "value": 80
+            },
+            {
+              "colorMode": "critical",
+              "fill": true,
+              "line": true,
+              "op": "gt",
+              "value": 95
+            }
+          ],
+          "timeRegions": [],
+          "title": "Average Multiprocessor Utilization: $System",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "logBase": 1,
+              "max": "100",
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+                {
+                  "options": {
+                    "match": "null",
+                    "result": {
+                      "text": "N/A"
+                    }
+                  },
+                  "type": "special"
+                }
+              ],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgba(50, 172, 45, 0.97)",
+                    "value": null
+                  },
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 80
+                  },
+                  {
+                    "color": "rgba(245, 54, 54, 0.9)",
+                    "value": 95
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 4,
+            "x": 10,
+            "y": 22
+          },
+          "id": 18,
+          "links": [],
+          "maxDataPoints": 100,
+          "options": {
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "text": {}
+          },
+          "pluginVersion": "8.5.6",
+          "targets": [
+            {
+              "hide": false,
+              "refId": "A",
+              "target": "averageSeries(hds.perf.physical.*.$System.PRCS.*._Total.REALTIME_PROCESSOR_BUSY_RATE)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Current Global Mutliprocessor Utilization $System",
+          "type": "gauge"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 10,
+            "x": 14,
+            "y": 22
+          },
+          "hiddenSeries": false,
+          "id": 57,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "max": true,
+            "min": true,
+            "show": true,
+            "sort": "min",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "HDS: Multiprocessors Details",
+              "url": "dashboard/db/hds-multiprocessors-details?$__url_time_range&$__all_variables"
+            }
+          ],
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.6",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {}
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "hide": false,
+              "refId": "A",
+              "target": "aliasByNode(sortByMaxima(hds.perf.physical.*.$System.PRCS.*._Total.REALTIME_MAX_BUFFER_IO_COUNT), 6)",
+              "textEditor": false,
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "warning",
+              "fill": true,
+              "line": true,
+              "op": "gt",
+              "value": 35000,
+              "yaxis": "left"
+            },
+            {
+              "colorMode": "critical",
+              "fill": true,
+              "line": true,
+              "op": "gt",
+              "value": 65535,
+              "yaxis": "left"
+            }
+          ],
+          "timeRegions": [],
+          "title": "Max Multiprocessor Buffer Length: $System",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "none",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        }
+      ],
+      "title": "Multiprocessor Statistics",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": {
+        "type": "graphite",
+        "uid": "000000001"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 30,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 23
+          },
+          "hiddenSeries": false,
+          "id": 1,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": true,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "HDS: Cache Details",
+              "url": "dashboard/db/hds-cache-details?$__url_time_range&$__all_variables"
+            }
+          ],
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.6",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "hide": false,
+              "refCount": 0,
+              "refId": "A",
+              "target": "aliasByMetric(sortByMaxima(hds.perf.physical.*.$System.CACHE.ALL.REALTIME_CACHE_WRITE_PENDING_RATE))",
+              "textEditor": false,
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "warning",
+              "fill": true,
+              "line": true,
+              "op": "gt",
+              "value": 40
+            },
+            {
+              "colorMode": "critical",
+              "fill": true,
+              "line": true,
+              "op": "gt",
+              "value": 60
+            }
+          ],
+          "timeRegions": [],
+          "title": "System Cache Write Pending: $System",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "logBase": 1,
+              "max": "100",
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+                {
+                  "options": {
+                    "match": "null",
+                    "result": {
+                      "text": "N/A"
+                    }
+                  },
+                  "type": "special"
+                }
+              ],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgba(50, 172, 45, 0.97)",
+                    "value": null
+                  },
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 40
+                  },
+                  {
+                    "color": "rgba(245, 54, 54, 0.9)",
+                    "value": 60
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 4,
+            "x": 8,
+            "y": 23
+          },
+          "id": 16,
+          "links": [],
+          "maxDataPoints": 100,
+          "options": {
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "text": {}
+          },
+          "pluginVersion": "8.5.6",
+          "targets": [
+            {
+              "refId": "A",
+              "target": "hds.perf.physical.*.$System.CACHE.ALL.REALTIME_CACHE_WRITE_PENDING_RATE",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Current Global Cache Write Pending $System",
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+                {
+                  "options": {
+                    "match": "null",
+                    "result": {
+                      "text": "N/A"
+                    }
+                  },
+                  "type": "special"
+                }
+              ],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "rgba(245, 54, 54, 0.9)",
+                    "value": null
+                  },
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 80
+                  },
+                  {
+                    "color": "rgba(50, 172, 45, 0.97)",
+                    "value": 95
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 4,
+            "x": 12,
+            "y": 23
+          },
+          "id": 17,
+          "links": [],
+          "maxDataPoints": 100,
+          "options": {
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "text": {}
+          },
+          "pluginVersion": "8.5.6",
+          "targets": [
+            {
+              "refId": "A",
+              "target": "hds.perf.physical.*.$System.CACHE.ALL.REALTIME_MAX_CACHE_MEMORY_USAGE_RATE",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Current Global Cache Utiliation $System",
+          "type": "gauge"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 16,
+            "y": 23
+          },
+          "hiddenSeries": false,
+          "id": 2,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": false,
+            "hideEmpty": true,
+            "hideZero": true,
+            "max": false,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 2,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "HDS: Cache Details",
+              "url": "dashboard/db/hds-cache-details?$__url_time_range&$__all_variables"
+            }
+          ],
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.6",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByMetric(sortByMinima(hds.perf.physical.*.$System.CACHE.ALL.REALTIME_CACHE_MEMORY_USAGE_RATE))",
+              "textEditor": false,
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "System Cache Usage: $System",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "logBase": 1,
+              "max": "100",
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        }
+      ],
+      "title": "Cache Statistics",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": {
+        "type": "graphite",
+        "uid": "000000001"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 53,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 24
+          },
+          "hiddenSeries": false,
+          "id": 55,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.0.3",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(hds.perf.physical.*.$System.CHS.*.REALTIME_AVG_IO_RATE, 6)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Channel Adapter IOPS of $System",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "iops",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 24
+          },
+          "hiddenSeries": false,
+          "id": 56,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.0.3",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(hds.perf.physical.*.$System.CHS.*.REALTIME_AVG_XFER_RATE, 6)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Channel Adapter Through of $System",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "MBs",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        }
+      ],
+      "title": "Channel Adapter",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": {
+        "type": "graphite",
+        "uid": "000000001"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 45,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 25
+          },
+          "hiddenSeries": false,
+          "id": 47,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "connected",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.6",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(hds.perf.physical.*.$System.RGS.*.REALTIME_MAX_BUSY_RATE, 6)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Max. Parity Group Utilization for $System",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "logBase": 1,
+              "max": "100",
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [
+                {
+                  "options": {
+                    "match": "null",
+                    "result": {
+                      "text": "N/A"
+                    }
+                  },
+                  "type": "special"
+                }
+              ],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "#299c46",
+                    "value": null
+                  },
+                  {
+                    "color": "rgba(237, 129, 40, 0.89)",
+                    "value": 70
+                  },
+                  {
+                    "color": "#d44a3a",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 12,
+            "y": 25
+          },
+          "id": 49,
+          "links": [],
+          "maxDataPoints": 100,
+          "options": {
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "text": {}
+          },
+          "pluginVersion": "8.5.6",
+          "targets": [
+            {
+              "refId": "A",
+              "target": "averageSeries(hds.perf.physical.*.$System.RGS.*.REALTIME_MAX_BUSY_RATE)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Current Average RAID Group Utilization",
+          "type": "gauge"
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fontSize": "80%",
+          "format": "percent",
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 18,
+            "y": 25
+          },
+          "id": 51,
+          "legend": {
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "values": true
+          },
+          "legendType": "Right side",
+          "links": [],
+          "maxDataPoints": 3,
+          "nullPointMode": "connected",
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(sortByMaxima(hds.perf.physical.*.$System.RGS.*.REALTIME_MAX_BUSY_RATE), 6)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Distribution of RAID Group Busy for $System",
+          "type": "grafana-piechart-panel",
+          "valueName": "current"
+        }
+      ],
+      "title": "RAID Groups",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": {
+        "type": "graphite",
+        "uid": "000000001"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 34,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 26
+          },
+          "hiddenSeries": false,
+          "id": 37,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.6",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(sortByMaxima(hds.perf.physical.*.$System.PORT.*.REALTIME_AVG_XFER_RATE), 6)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Realtime Port Throughput for $System",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "MBs",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 26
+          },
+          "hiddenSeries": false,
+          "id": 38,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.5.6",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(sortByMaxima(hds.perf.physical.*.$System.PORT.*.REALTIME_AVG_IO_RATE), 6)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Realtime Port Throughput for $System",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "iops",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "columns": [
+            {
+              "$$hashKey": "object:640",
+              "text": "Max",
+              "value": "max"
+            },
+            {
+              "$$hashKey": "object:641",
+              "text": "Avg",
+              "value": "avg"
+            },
+            {
+              "$$hashKey": "object:642",
+              "text": "Current",
+              "value": "current"
+            }
+          ],
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 7,
+            "w": 8,
+            "x": 0,
+            "y": 35
+          },
+          "id": 23,
+          "links": [],
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 3,
+            "desc": true
+          },
+          "styles": [
+            {
+              "$$hashKey": "object:1255",
+              "alias": "Time",
+              "align": "auto",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "$$hashKey": "object:1256",
+              "alias": "Port",
+              "align": "auto",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "link": true,
+              "linkTargetBlank": true,
+              "linkTooltip": "Details for $__cell_0",
+              "linkUrl": "/d/QU4t_L6kz/hds-port-details?orgId=1&var-Type=*&var-System=$System&var-Port=$__cell_0",
+              "pattern": "/^Metric/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            },
+            {
+              "$$hashKey": "object:1257",
+              "alias": "",
+              "align": "auto",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "iops"
+            }
+          ],
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(highestCurrent(hds.perf.physical.*.$System.PORT.*.REALTIME_AVG_IO_RATE, 20), 6)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Port with highest IOPS on $System",
+          "transform": "timeseries_aggregations",
+          "type": "table-old"
+        },
+        {
+          "columns": [
+            {
+              "text": "Max",
+              "value": "max"
+            },
+            {
+              "text": "Avg",
+              "value": "avg"
+            },
+            {
+              "text": "Current",
+              "value": "current"
+            }
+          ],
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 7,
+            "w": 8,
+            "x": 8,
+            "y": 35
+          },
+          "id": 24,
+          "links": [],
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 3,
+            "desc": true
+          },
+          "styles": [
+            {
+              "$$hashKey": "object:1348",
+              "alias": "Time",
+              "align": "auto",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "$$hashKey": "object:1349",
+              "alias": "Port",
+              "align": "auto",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "link": true,
+              "linkTargetBlank": true,
+              "linkTooltip": "Details for $__cell_0",
+              "linkUrl": "/d/QU4t_L6kz/hds-port-details?orgId=1&var-Type=*&var-System=$System&var-Port=$__cell_0",
+              "pattern": "/^Metric/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            },
+            {
+              "$$hashKey": "object:1350",
+              "alias": "",
+              "align": "auto",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "MBs"
+            }
+          ],
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(highestCurrent(hds.perf.physical.*.$System.PORT.*.REALTIME_AVG_XFER_RATE, 20), 6)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Port with highest Throughput on $System",
+          "transform": "timeseries_aggregations",
+          "type": "table-old"
+        },
+        {
+          "columns": [
+            {
+              "text": "Max",
+              "value": "max"
+            },
+            {
+              "text": "Avg",
+              "value": "avg"
+            },
+            {
+              "text": "Current",
+              "value": "current"
+            }
+          ],
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 7,
+            "w": 8,
+            "x": 16,
+            "y": 35
+          },
+          "id": 25,
+          "links": [],
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 3,
+            "desc": true
+          },
+          "styles": [
+            {
+              "$$hashKey": "object:1441",
+              "alias": "Time",
+              "align": "auto",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "$$hashKey": "object:1442",
+              "alias": "Port",
+              "align": "auto",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "link": true,
+              "linkTargetBlank": true,
+              "linkTooltip": "Details for $__cell_0",
+              "linkUrl": "/d/QU4t_L6kz/hds-port-details?orgId=1&var-Type=*&var-System=$System&var-Port=$__cell_0",
+              "pattern": "/^Metric/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "none"
+            },
+            {
+              "$$hashKey": "object:1443",
+              "alias": "",
+              "align": "auto",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "µs"
+            }
+          ],
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(highestCurrent(hds.perf.physical.*.$System.PORT.*.LATENCY, 20), 6)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "Port with highest Latency on $System",
+          "transform": "timeseries_aggregations",
+          "type": "table-old"
+        }
+      ],
+      "title": "Port Performance",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": {
+        "type": "graphite",
+        "uid": "000000001"
+      },
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 35,
+      "panels": [
+        {
+          "columns": [
+            {
+              "$$hashKey": "object:734",
+              "text": "Avg",
+              "value": "avg"
+            },
+            {
+              "$$hashKey": "object:735",
+              "text": "Max",
+              "value": "max"
+            },
+            {
+              "$$hashKey": "object:736",
+              "text": "Current",
+              "value": "current"
+            }
+          ],
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 0,
+            "y": 27
+          },
+          "id": 26,
+          "links": [],
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 3,
+            "desc": true
+          },
+          "styles": [
+            {
+              "$$hashKey": "object:997",
+              "alias": "Time",
+              "align": "auto",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "$$hashKey": "object:998",
+              "alias": "LDEV-ID",
+              "align": "auto",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "link": true,
+              "linkTargetBlank": true,
+              "linkTooltip": "Go to details for LDEV $__cell_0",
+              "linkUrl": "/d/1AVp_Y6zz/hds-ldev-details?orgId=1&var-Type=*&var-System=$System&var-Pool=*&var-LDEV=$__cell_0",
+              "pattern": "/^Metric/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            },
+            {
+              "$$hashKey": "object:999",
+              "alias": "",
+              "align": "auto",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "link": true,
+              "linkTargetBlank": true,
+              "linkTooltip": "Go to details for LDEV $__cell_0",
+              "linkUrl": "/d/1AVp_Y6zz/hds-ldev-details?orgId=1&var-Type=*&var-System=$System&var-Pool=*&var-LDEV=$__cell_0",
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "iops"
+            }
+          ],
+          "targets": [
+            {
+              "refId": "A",
+              "target": "aliasByNode(highestCurrent(sumSeriesWithWildcards(hds.perf.physical.*.$System.LDEV.DP.000.*.REAL*IO_RATE, 9), 20), 8)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "LDEV of $System with hight average IOPS",
+          "transform": "timeseries_aggregations",
+          "type": "table-old"
+        },
+        {
+          "columns": [
+            {
+              "$$hashKey": "object:828",
+              "text": "Avg",
+              "value": "avg"
+            },
+            {
+              "$$hashKey": "object:829",
+              "text": "Max",
+              "value": "max"
+            },
+            {
+              "$$hashKey": "object:830",
+              "text": "Current",
+              "value": "current"
+            }
+          ],
+          "datasource": {
+            "type": "graphite",
+            "uid": "${DS_LOCALGRAPHITE}"
+          },
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 12,
+            "y": 27
+          },
+          "id": 27,
+          "links": [],
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 1,
+            "desc": true
+          },
+          "styles": [
+            {
+              "$$hashKey": "object:1082",
+              "alias": "Time",
+              "align": "auto",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "$$hashKey": "object:1083",
+              "alias": "LDEV-ID",
+              "align": "auto",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "link": true,
+              "linkTargetBlank": true,
+              "linkTooltip": "Go to details for LDEV $__cell_0",
+              "linkUrl": "/d/1AVp_Y6zz/hds-ldev-details?orgId=1&var-Type=*&var-System=$System&var-Pool=*&var-LDEV=$__cell_0",
+              "pattern": "/^Metric/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            },
+            {
+              "$$hashKey": "object:1084",
+              "alias": "",
+              "align": "auto",
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "link": true,
+              "linkTargetBlank": true,
+              "linkTooltip": "Go to details for LDEV $__cell_0",
+              "linkUrl": "/d/1AVp_Y6zz/hds-ldev-details?orgId=1&var-Type=*&var-System=$System&var-Pool=*&var-LDEV=$__cell_0",
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "MBs"
+            }
+          ],
+          "targets": [
+            {
+              "hide": false,
+              "refId": "A",
+              "target": "aliasByNode(highestCurrent(sumSeriesWithWildcards(hds.perf.physical.*.$System.LDEV.DP.*.*.REALTIME_*_XFER_RATE, 9), 20), 8)",
+              "datasource": {
+                "type": "graphite",
+                "uid": "${DS_LOCALGRAPHITE}"
+              }
+            }
+          ],
+          "title": "LDEV of $System with hight average Throughput",
+          "transform": "timeseries_aggregations",
+          "type": "table-old"
+        }
+      ],
+      "title": "LDEV Performance",
+      "type": "row"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": [
+    "HDS",
+    "REALTIME"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "graphite",
+          "uid": "${DS_LOCALGRAPHITE}"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "System",
+        "options": [],
+        "query": "hds.perf.physical.*.*",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now-1m"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "browser",
+  "title": "HDS: Realtime System Performance",
+  "uid": "2zkXphtmk",
+  "version": 20,
+  "weekStart": ""
+}
