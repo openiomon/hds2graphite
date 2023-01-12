@@ -192,7 +192,7 @@ sub readconfig {
                                 $usetag = 1;
                             }
                         }
-		    }
+            }
                     when ("realtime") {
                         my @values = split("=",$configline);
                         if($configline =~ "realtime_application") {
@@ -214,9 +214,9 @@ sub readconfig {
                             $htnm_passwd = $values[1];
                             $htnm_passwd =~s/\s//g;
                         } elsif ($configline =~ "^ssl_verfiy_host") {
-							$ssl_verify = $values[1];
-							$ssl_verify =~s/\s//g;
-						}
+                            $ssl_verify = $values[1];
+                            $ssl_verify =~s/\s//g;
+                        }
                     }
                     when ("performance") {
                         my @values = split ("=",$configline);
@@ -267,8 +267,8 @@ sub readconfig {
                                 my @values = split ("=",$configline);
                                 $maxmetricsperminute = $values[1];
                             } elsif ($configline =~ "ssl_verfiy_host") {
-								$arrays{$conf_storagename}{"ssl_verfiy_host"} = $values[1];
-							}
+                                $arrays{$conf_storagename}{"ssl_verfiy_host"} = $values[1];
+                            }
                     }
                 }
             }
@@ -307,7 +307,7 @@ sub setdefaults {
     if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
                 $htnm_passwd = $arrays{$storagename}{"realtime_api_passwd"};
         }
-	if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
+    if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
         $ssl_verify = $arrays{$storagename}{"ssl_verfiy_host"};
     }
 }
@@ -318,7 +318,7 @@ sub http_get {
     $req->header('Content-Type' => 'application/json');
     $req->authorization_basic($htnm_user,$htnm_passwd);
     my $curlcmd = 'curl -ks -X GET -H "Content-Type: application/json" -u '.$htnm_user.':'.$htnm_passwd.' -i '.$geturl;
-	my $debugcmd = 'curl -ks -X GET -H "Content-Type: application/json" -u '.$htnm_user.':xxxxxxxxx'.' -i '.$geturl;
+    my $debugcmd = 'curl -ks -X GET -H "Content-Type: application/json" -u '.$htnm_user.':xxxxxxxxx'.' -i '.$geturl;
     $log->debug($debugcmd);
     my $resp = $ua->request($req);
     if ($resp->is_success) {
@@ -450,36 +450,36 @@ sub reportmetric {
                     my @values = split(",",$line);
                     my @labels = @{$labels{$unit}};
                     my $labelcontent="";
-					my $taglabel;
+                    my $taglabel;
                     for(my $i=0;$i<scalar(@labels);$i+=1) {
                         my $label = $labels[$i];
                         if($i==0) {
                             if(defined $header{$label}{"position"}) {
-								if($usetag) {
-									$taglabel=lc($label).'='.$values[$header{$label}{"position"}];
-								} 
-	                            $labelcontent=$values[$header{$label}{"position"}];
+                                if($usetag) {
+                                    $taglabel=lc($label).'='.$values[$header{$label}{"position"}];
+                                } 
+                                $labelcontent=$values[$header{$label}{"position"}];
                             } else {
-								if($usetag) {
-									$taglabel='label='.$label;
-								}
-	                            $labelcontent=$label;
+                                if($usetag) {
+                                    $taglabel='label='.$label;
+                                }
+                                $labelcontent=$label;
                             }
                         } else {
                             if(defined $header{$label}{"position"}) {
-								if($usetag) {
-									$taglabel.=';'.lc($label).'='.$values[$header{$label}{"position"}];
-								}
-	                            $labelcontent.='.'.$values[$header{$label}{"position"}];
+                                if($usetag) {
+                                    $taglabel.=';'.lc($label).'='.$values[$header{$label}{"position"}];
+                                }
+                                $labelcontent.='.'.$values[$header{$label}{"position"}];
                             } else {
-								if($usetag) {
+                                if($usetag) {
                                     $taglabel='label='.$label;
                                 }
-	                            $labelcontent.='.'.$label;
+                                $labelcontent.='.'.$label;
                             }
                         }
                         $labelcontent =~s/\"//g;
-						$taglabel =~s/\"//g;
+                        $taglabel =~s/\"//g;
                     }
                     foreach my $metric (@{$metrics{$unit}}) {
                         my $metric_value = $values[$header{$metric}{"position"}];
@@ -513,37 +513,37 @@ sub reportmetric {
                             my $mp_id = $ldevs{$labelcontent}{'mp_id'};
                             if ($parity_grp ne '') {
                                 $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.PG.'.$parity_grp.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-								if($usetag) {
-									$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';type=pg;pg_id='.$parity_grp.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
-								}
+                                if($usetag) {
+                                    $graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';type=pg;pg_id='.$parity_grp.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+                                }
                             } else {
                                 if($pool_id ne '') {
                                     $pool_id = sprintf("%03d",$pool_id);
                                     $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.DP.'.$pool_id.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
                                     my $mpmetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.PRCS.'.$mp_id.'.LDEV.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-				    				if($usetag) {
-										$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';mp_id='.$mp_id.';type=dp;pool_id='.$pool_id.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
-				    				}
+                                    if($usetag) {
+                                        $graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';mp_id='.$mp_id.';type=dp;pool_id='.$pool_id.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+                                    }
                                     if($ldevs{$labelcontent}{'vldev_id'} ne '') {
                                         my $virt_ldev = $ldevs{$labelcontent}{'vldev_id'};
                                         my $virt_storage_sn = $ldevs{$labelcontent}{'vsn'};
-										$log->trace("Found virtual ldev: ".$virt_ldev." from serial: ".$virt_storage_sn);
+                                        $log->trace("Found virtual ldev: ".$virt_ldev." from serial: ".$virt_storage_sn);
                                         my $virt_storage_name = $vsms{$storagename}{$virt_storage_sn}{'name'};
                                         my $virt_storage_type = $vsms{$storagename}{$virt_storage_sn}{'type'};
                                         my $virtmetric = 'hds.perf.virtual.'.$virt_storage_type.'.'.$virt_storage_name.'.'.$target.'.DP.'.$pool_id.'.'.$virt_ldev.'.'.$storagename.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-										if($usetag) {
-											$virtmetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=virtual;storagetype='.$virt_storage_type.';storagename='.$virt_storage_name.';type=dp;pool_id='.$pool_id.';'.$taglabel.';phys_storagename='.$storagename.' '.$metric_value.' '.$graphitetime;
-										}
+                                        if($usetag) {
+                                            $virtmetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=virtual;storagetype='.$virt_storage_type.';storagename='.$virt_storage_name.';type=dp;pool_id='.$pool_id.';'.$taglabel.';phys_storagename='.$storagename.' '.$metric_value.' '.$graphitetime;
+                                        }
                                         toGraphite($virtmetric);
                                     }
                                 }
                             }
                         } else {
                             $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-							if($usetag) {
-								$labelcontent =~ s/\./_/g;
-								$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';unit='.$target.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
-							}
+                            if($usetag) {
+                                $labelcontent =~ s/\./_/g;
+                                $graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';unit='.$target.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+                            }
                         }
                         toGraphite($graphitemetric);
                         $interval = $values[$header{"INTERVAL"}{"position"}];
@@ -565,9 +565,9 @@ sub initializereporter {
     $instance = $htnm_agents{$serial}{"instanceName"};
     $instance_hostname = $htnm_agents{$serial}{"hostName"};
     if($instance eq "" or $instance_hostname eq "") {
-	$log->error("No HTNM / HIAA / Analyzer Instance found for ".$storagename."! Please check");
-	stopservice();
-	exit(1);	
+    $log->error("No HTNM / HIAA / Analyzer Instance found for ".$storagename."! Please check");
+    stopservice();
+    exit(1);    
     }
     my $metricfile = $metricpath.'/'.$storagetype.'_realtime_metrics.conf';
 
