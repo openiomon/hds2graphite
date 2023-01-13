@@ -8,6 +8,8 @@ License: GPL
 Group: Applications/Internet
 BuildArch: x86_64
 AutoReqProv: no
+URL: https://github.com/openiomon/%{name}
+Source0: https://github.com/openiomon/%{name}/%{name}-%{version}.tar.gz
 Requires: perl(Readonly) perl(JSON) perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(Log::Log4perl) perl(POSIX) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
 
 
