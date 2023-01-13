@@ -1,17 +1,15 @@
-Summary: hds2graphite is a module of openiomon which is used to transfer statistics from the Hitachi block storage systems (G1x00, Gx00, VSP) to a graphite system to be able to display this statistics in Grafana.
-Name: hds2graphite
-Version: 0.4
-prefix: /opt
-Release: 0.el7
-URL: http://www.openiomon.org
-License: GPL
-Group: Applications/Internet
-BuildArch: x86_64
+Summary:    hds2graphite is a module of openiomon which is used to transfer statistics from the Hitachi block storage systems (G1x00, Gx00, VSP) to a graphite system to be able to display this statistics in Grafana.
+Name:       hds2graphite
+Version:    0.4
+prefix:     /opt
+Release:    0.el7
+License:    GPL
+Group:      Applications/Internet
+BuildArch:  x86_64
 AutoReqProv: no
-URL: https://github.com/openiomon/%{name}
-Source0: https://github.com/openiomon/%{name}/%{name}-%{version}.tar.gz
-Requires: perl(Readonly) perl(JSON) perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(Log::Log4perl) perl(POSIX) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
-
+URL:        https://github.com/openiomon/%{name}
+Source0:    https://github.com/openiomon/%{name}/%{name}-%{version}.tar.gz
+Requires:   perl(Readonly) perl(JSON) perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(Log::Log4perl) perl(POSIX) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
 
 
 %description
