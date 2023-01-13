@@ -1,0 +1,37 @@
+# This is a basic workflow to help you get started with Actions
+
+name: RPM Build
+
+# Controls when the action will run. Triggers the workflow on push 
+on: workflow_dispatch
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    
+    # Runs a community action
+    - name: build RPM package
+      id: rpm
+      uses: naveenrajm7/rpmbuild@master
+      with:
+        spec_file: "build/hds2graphite.el7.spec"
+    
+    - name: Print output
+      run: echo ${{steps.rpm.outputs.source_rpm_path}}
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        # Artifact name
+        name: Binary RPM
+        # Directory containing files to upload
+        path: ${{ steps.rpm.outputs.rpm_dir_path }}
