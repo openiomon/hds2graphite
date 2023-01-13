@@ -25,6 +25,7 @@ use constant true  => 1;
 use Getopt::Long;
 use Log::Log4perl;
 use POSIX qw(strftime);
+no warnings qw( experimental::smartmatch );
 
 
 # For all initially initialized variables, values represent defaults used if they are not specified via configfile
@@ -295,9 +296,23 @@ sub reloadsystemctl {
 
 sub registerservice {
     my $storagename = $_[0];
+    my $systemdver = "";
+    if(!defined($_[1])) {
+        my $systemdcmd = 'systemctl --version';
+        my $systemdout = `$systemdcmd`;
+        if($systemdout =~ "^systemd ") {
+            my @parts = split(' ',$systemdout);
+            $systemdver = $parts[1];
+        } else {
+            print ("Unable to evaluate systemd version using command: ".$systemdcmd." - Please check!");
+            exit(1);
+        }
+    } else {
+        $systemdver=$_[1];
+    }
     if($storagename eq 'ALL') {
         foreach my $storagesystem (sort keys %storage) {
-            registerservice($storagesystem);
+            registerservice($storagesystem,$systemdver);
         }
     } else {
         if(!$realtime) {
@@ -320,13 +335,22 @@ sub registerservice {
                 print $sfh "Documentation=http://www.openiomon.org\n";
                 print $sfh "Wants=network-online.target\n";
                 print $sfh "After=network-online.target\n";
-                print $sfh "After=go-carbon.service\n\n";
+                print $sfh "After=go-carbon.service\n";
+                if($systemdver >=230) {
+                    print $sfh "StartLimitIntervalSec=400\n";
+                    print $sfh "StartLimitBurst=10\n\n";
+                }
                 print $sfh "[Service]\n";
                 print $sfh "Environment=\"PERL5LIB=".$libdir."perl5/:".$libdir."perl5/x86_64-linux-thread-multi/:".join(":",@INC)."\"\n";
                 print $sfh "User=".$serviceuser."\n";
                 print $sfh "Group=".$servicegroup."\n";
                 print $sfh "Type=notify\n";
                 print $sfh "Restart=always\n";
+                print $sfh "RestartSec=30\n";
+                if($systemdver <230) {
+                    print $sfh "StartLimitInterval=400\n";
+                    print $sfh "StartLimitBurst=10\n";
+                }
                 print $sfh "WatchdogSec=".$watchdog."\n";
                 print $sfh "WorkingDirectory=".$workdir."\n";
                 print $sfh "RuntimeDirectoryMode=0750\n";
@@ -361,13 +385,22 @@ sub registerservice {
                                 print $sfh "Documentation=http://www.openiomon.org\n";
                                 print $sfh "Wants=network-online.target\n";
                                 print $sfh "After=network-online.target\n";
-                                print $sfh "After=go-carbon.service\n\n";
+                                print $sfh "After=go-carbon.service\n";
+                                if($systemdver >=230) {
+                                   print $sfh "StartLimitIntervalSec=400\n";
+                                   print $sfh "StartLimitBurst=10\n\n";
+                                }
                                 print $sfh "[Service]\n";
                                 print $sfh "Environment=\"PERL5LIB=".$libdir."perl5/:".$libdir."perl5/x86_64-linux-thread-multi/:".join(":",@INC)."\"\n";
                                 print $sfh "User=".$serviceuser."\n";
                                 print $sfh "Group=".$servicegroup."\n";
                                 print $sfh "Type=notify\n";
                                 print $sfh "Restart=always\n";
+                                print $sfh "RestartSec=30\n";
+                                if($systemdver <230) {
+                                    print $sfh "StartLimitInterval=400\n";
+                                    print $sfh "StartLimitBurst=10\n";
+                                }
                                 print $sfh "WatchdogSec=".$watchdog."\n";
                                 print $sfh "WorkingDirectory=".$workdir."\n";
                                 print $sfh "RuntimeDirectoryMode=0750\n";
