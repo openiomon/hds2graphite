@@ -16,12 +16,12 @@ use constant true  => 1;
 
 use Getopt::Long;
 use IO::Socket::INET;
+use IO::Socket::UNIX;
 use JSON;
 use Log::Log4perl;
 use LWP::UserAgent();
 use POSIX qw(strftime);
 use POSIX ":sys_wait_h";
-use Systemd::Daemon qw( -hard notify );
 use Time::HiRes qw(nanosleep usleep gettimeofday tv_interval);
 use Time::Piece;
 
@@ -79,6 +79,8 @@ my $log;
 my $logpath = '/opt/hds2graphite/log/';
 my $logfile='';
 my $loglevel = 'INFO';
+
+my $mainpid = $$;
 
 # Sub to print the parameter reference
 
@@ -144,37 +146,37 @@ sub readconfig {
         chomp($configline);
         if (($configline !~ "^#") && (length($configline)>3)){
             if ($configline =~ '\[') {
-                        $configline =~ s/\[//g;
-                        $configline =~ s/\]//g;
-                        $configline =~ s/\s//g;
-                        $section = $configline;
-                } else {
+                $configline =~ s/\[//g;
+                $configline =~ s/\]//g;
+                $configline =~ s/\s//g;
+                $section = $configline;
+            } else {
                 given($section) {
                     when ("logging") {
                         my @values = split ("=",$configline);
                         if ($configline=~"hds2graphite_logdir") {
-                                my $logpath = $values[1];
-                                $logpath =~s/\s//g;
-                                if(substr($logpath,-1) ne "/") {
-                                    $logpath = $logpath."/";
-                                }
+                            my $logpath = $values[1];
+                            $logpath =~s/\s//g;
+                            if(substr($logpath,-1) ne "/") {
+                                $logpath = $logpath."/";
+                            }
                         }
                         if ($configline=~"loglevel") {
-                                my $configloglevel = $values[1];
-                                $configloglevel=~ s/\s//g;
-                                if(uc($configloglevel) eq "FATAL") {
-                                        $loglevel = "FATAL";
-                                } elsif (uc($configloglevel) eq "ERROR") {
-                                        $loglevel = "ERROR";
-                                } elsif (uc($configloglevel) eq "WARN") {
-                                        $loglevel = "WARN";
-                                } elsif (uc($configloglevel) eq "INFO") {
-                                        $loglevel = "INFO";
-                                } elsif (uc($configloglevel) eq "DEBUG") {
-                                        $loglevel = "DEBUG";
-                                } elsif (uc($configloglevel) eq "TRACE") {
-                                        $loglevel = "TRACE";
-                                }
+                            my $configloglevel = $values[1];
+                            $configloglevel=~ s/\s//g;
+                            if(uc($configloglevel) eq "FATAL") {
+                                $loglevel = "FATAL";
+                            } elsif (uc($configloglevel) eq "ERROR") {
+                                $loglevel = "ERROR";
+                            } elsif (uc($configloglevel) eq "WARN") {
+                                $loglevel = "WARN";
+                            } elsif (uc($configloglevel) eq "INFO") {
+                                $loglevel = "INFO";
+                            } elsif (uc($configloglevel) eq "DEBUG") {
+                                $loglevel = "DEBUG";
+                            } elsif (uc($configloglevel) eq "TRACE") {
+                                $loglevel = "TRACE";
+                            }
                         }
                     }
                     when ("graphite") {
@@ -192,7 +194,7 @@ sub readconfig {
                                 $usetag = 1;
                             }
                         }
-            }
+		            }
                     when ("realtime") {
                         my @values = split("=",$configline);
                         if($configline =~ "realtime_application") {
@@ -214,9 +216,9 @@ sub readconfig {
                             $htnm_passwd = $values[1];
                             $htnm_passwd =~s/\s//g;
                         } elsif ($configline =~ "^ssl_verfiy_host") {
-                            $ssl_verify = $values[1];
-                            $ssl_verify =~s/\s//g;
-                        }
+							$ssl_verify = $values[1];
+							$ssl_verify =~s/\s//g;
+						}
                     }
                     when ("performance") {
                         my @values = split ("=",$configline);
@@ -229,46 +231,46 @@ sub readconfig {
                         #print $conf_storagename."\n";
                         my @values = split ("=",$configline);
                         $values[1] =~ s/\s//g;
-                            if($configline =~ "subsystem_type") {
-                                my @values = split ("=",$configline);
-                                $arraytype = $values[1];
-                                $arraytype =~ s/\s//g;
-                                $arraytype = lc($arraytype);
-                            } elsif ($configline =~ "subsystem_name") {
-                                my @values = split ("=",$configline);
-                                $conf_storagename = $values[1];
-                                $conf_storagename =~ s/\s//g;
-                                $conf_storagename = uc($conf_storagename);
-                                $arrays{$conf_storagename}{"serial"}=$arrayserial;
-                                $arrays{$conf_storagename}{"type"}=$arraytype;
-                            } elsif ($configline =~ "realtime_application") {
-                                $arrays{$conf_storagename}{"realtime_application"}=$values[1];
-                            } elsif ($configline =~ "realtime_api_host") {
-                                $arrays{$conf_storagename}{"realtime_api_host"}=$values[1];
-                            } elsif ($configline =~ "realtime_api_port") {
-                                $arrays{$conf_storagename}{"realtime_api_port"}=$values[1];
-                            } elsif ($configline =~ "realtime_api_proto") {
-                                $arrays{$conf_storagename}{"realtime_api_proto"}=$values[1];
-                            } elsif ($configline =~ "realtime_api_user") {
-                                $arrays{$conf_storagename}{"realtime_api_user"}=$values[1];
-                            } elsif ($configline =~ "realtime_api_passwd") {
-                                $arrays{$conf_storagename}{"realtime_api_passwd"}=$values[1];
-                            } elsif ($configline =~ "gad_vsm") {
-                                my @gad_vsm_strings = split(",",$values[1]);
-                                my $gad_sn=$gad_vsm_strings[0];
-                                my $gad_vsm_type = $gad_vsm_strings[1];
-                                my $gad_name=$gad_vsm_strings[2];
-                                my $gad_rgid=$gad_vsm_strings[3];
-                                $vsms{$conf_storagename}{$gad_sn}{"name"} = $gad_name;
-                                $vsms{$conf_storagename}{$gad_sn}{"type"} = $gad_vsm_type;
-                                $vsms{$conf_storagename}{$gad_sn}{"rsgid"} = $gad_rgid;
-                            } elsif ($configline =~ "max_metrics_per_minute") {
-                                $configline =~ s/\s//g;
-                                my @values = split ("=",$configline);
-                                $maxmetricsperminute = $values[1];
-                            } elsif ($configline =~ "ssl_verfiy_host") {
-                                $arrays{$conf_storagename}{"ssl_verfiy_host"} = $values[1];
-                            }
+                        if($configline =~ "subsystem_type") {
+                            my @values = split ("=",$configline);
+                            $arraytype = $values[1];
+                            $arraytype =~ s/\s//g;
+                            $arraytype = lc($arraytype);
+                        } elsif ($configline =~ "subsystem_name") {
+                            my @values = split ("=",$configline);
+                            $conf_storagename = $values[1];
+                            $conf_storagename =~ s/\s//g;
+                            $conf_storagename = uc($conf_storagename);
+                            $arrays{$conf_storagename}{"serial"}=$arrayserial;
+                            $arrays{$conf_storagename}{"type"}=$araytype;
+                        } elsif ($configline =~ "realtime_appliction") {
+                            $arrays{$conf_storagename}{"realtime_application"}=$values[1];
+                        } elsif ($configline =~ "realtime_api_host") {
+                            $arrays{$conf_storagename}{"realtime_api_host"}=$values[1];
+                        } elsif ($configline =~ "realtime_api_port") {
+                            $arrays{$conf_storagename}{"realtime_api_port"}=$values[1];
+                        } elsif ($configline =~ "realtime_api_proto") {
+                            $arrays{$conf_storagename}{"realtime_api_proto"}=$values[1];
+                        } elsif ($configline =~ "realtime_api_user") {
+                            $arrays{$conf_storagename}{"realtime_api_user"}=$values[1];
+                        } elsif ($configline =~ "realtime_api_passwd") {
+                            $arrays{$conf_storagename}{"realtime_api_passwd"}=$values[1];
+                        } elsif ($configline =~ "gad_vsm") {
+                            my @gad_vsm_strings = split(",",$values[1]);
+                            my $gad_sn=$gad_vsm_strings[0];
+                            my $gad_vsm_type = $gad_vsm_strings[1];
+                            my $gad_name=$gad_vsm_strings[2];
+                            my $gad_rgid=$gad_vsm_strings[3];
+                            $vsms{$conf_storagename}{$gad_sn}{"name"} = $gad_name;
+                            $vsms{$conf_storagename}{$gad_sn}{"type"} = $gad_vsm_type;
+                            $vsms{$conf_storagename}{$gad_sn}{"rsgid"} = $gad_rgid;
+                        } elsif ($configline =~ "max_metrics_per_minute") {
+                            $configline =~ s/\s//g;
+                            my @values = split ("=",$configline);
+                            $maxmetricsperminute = $values[1];
+                        } elsif ($configline =~ "ssl_verfiy_host") {
+							$arrays{$conf_storagename}{"ssl_verfiy_host"} = $values[1];
+    					}
                     }
                 }
             }
@@ -288,26 +290,25 @@ sub readconfig {
 }
 
 sub setdefaults {
-
     if(defined $arrays{$storagename}{"realtime_application"}) {
         $htnm_appl = $arrays{$storagename}{"realtime_application"};
     }
     if(defined $arrays{$storagename}{"realtime_api_host"}) {
-                $htnm_server = $arrays{$storagename}{"realtime_api_host"};
-        }
+        $htnm_server = $arrays{$storagename}{"realtime_api_host"};
+    }
     if(defined $arrays{$storagename}{"realtime_api_port"}) {
-                $htnm_port = $arrays{$storagename}{"realtime_api_port"};
-        }
+        $htnm_port = $arrays{$storagename}{"realtime_api_port"};
+    }
     if(defined $arrays{$storagename}{"realtime_api_proto"}) {
-                $htnm_proto = $arrays{$storagename}{"realtime_api_proto"};
-        }
+        $htnm_proto = $arrays{$storagename}{"realtime_api_proto"};
+    }
     if(defined $arrays{$storagename}{"realtime_api_user"}) {
-                $htnm_user = $arrays{$storagename}{"realtime_api_user"};
-        }
+        $htnm_user = $arrays{$storagename}{"realtime_api_user"};
+    }
     if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
-                $htnm_passwd = $arrays{$storagename}{"realtime_api_passwd"};
-        }
-    if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
+        $htnm_passwd = $arrays{$storagename}{"realtime_api_passwd"};
+    }
+	if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
         $ssl_verify = $arrays{$storagename}{"ssl_verfiy_host"};
     }
 }
@@ -318,7 +319,7 @@ sub http_get {
     $req->header('Content-Type' => 'application/json');
     $req->authorization_basic($htnm_user,$htnm_passwd);
     my $curlcmd = 'curl -ks -X GET -H "Content-Type: application/json" -u '.$htnm_user.':'.$htnm_passwd.' -i '.$geturl;
-    my $debugcmd = 'curl -ks -X GET -H "Content-Type: application/json" -u '.$htnm_user.':xxxxxxxxx'.' -i '.$geturl;
+	my $debugcmd = 'curl -ks -X GET -H "Content-Type: application/json" -u '.$htnm_user.':xxxxxxxxx'.' -i '.$geturl;
     $log->debug($debugcmd);
     my $resp = $ua->request($req);
     if ($resp->is_success) {
@@ -450,36 +451,36 @@ sub reportmetric {
                     my @values = split(",",$line);
                     my @labels = @{$labels{$unit}};
                     my $labelcontent="";
-                    my $taglabel;
+					my $taglabel;
                     for(my $i=0;$i<scalar(@labels);$i+=1) {
                         my $label = $labels[$i];
                         if($i==0) {
                             if(defined $header{$label}{"position"}) {
-                                if($usetag) {
-                                    $taglabel=lc($label).'='.$values[$header{$label}{"position"}];
-                                } 
-                                $labelcontent=$values[$header{$label}{"position"}];
+								if($usetag) {
+									$taglabel=lc($label).'='.$values[$header{$label}{"position"}];
+								} 
+	                            $labelcontent=$values[$header{$label}{"position"}];
                             } else {
-                                if($usetag) {
-                                    $taglabel='label='.$label;
-                                }
-                                $labelcontent=$label;
+								if($usetag) {
+									$taglabel='label='.$label;
+								}
+	                            $labelcontent=$label;
                             }
                         } else {
                             if(defined $header{$label}{"position"}) {
-                                if($usetag) {
-                                    $taglabel.=';'.lc($label).'='.$values[$header{$label}{"position"}];
-                                }
-                                $labelcontent.='.'.$values[$header{$label}{"position"}];
+								if($usetag) {
+									$taglabel.=';'.lc($label).'='.$values[$header{$label}{"position"}];
+								}
+	                            $labelcontent.='.'.$values[$header{$label}{"position"}];
                             } else {
-                                if($usetag) {
+								if($usetag) {
                                     $taglabel='label='.$label;
                                 }
-                                $labelcontent.='.'.$label;
+	                            $labelcontent.='.'.$label;
                             }
                         }
                         $labelcontent =~s/\"//g;
-                        $taglabel =~s/\"//g;
+						$taglabel =~s/\"//g;
                     }
                     foreach my $metric (@{$metrics{$unit}}) {
                         my $metric_value = $values[$header{$metric}{"position"}];
@@ -513,37 +514,37 @@ sub reportmetric {
                             my $mp_id = $ldevs{$labelcontent}{'mp_id'};
                             if ($parity_grp ne '') {
                                 $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.PG.'.$parity_grp.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-                                if($usetag) {
-                                    $graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';type=pg;pg_id='.$parity_grp.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
-                                }
+								if($usetag) {
+									$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';type=pg;pg_id='.$parity_grp.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+								}
                             } else {
                                 if($pool_id ne '') {
                                     $pool_id = sprintf("%03d",$pool_id);
                                     $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.DP.'.$pool_id.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
                                     my $mpmetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.PRCS.'.$mp_id.'.LDEV.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-                                    if($usetag) {
-                                        $graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';mp_id='.$mp_id.';type=dp;pool_id='.$pool_id.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
-                                    }
+				    				if($usetag) {
+										$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';mp_id='.$mp_id.';type=dp;pool_id='.$pool_id.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+				    				}
                                     if($ldevs{$labelcontent}{'vldev_id'} ne '') {
                                         my $virt_ldev = $ldevs{$labelcontent}{'vldev_id'};
                                         my $virt_storage_sn = $ldevs{$labelcontent}{'vsn'};
-                                        $log->trace("Found virtual ldev: ".$virt_ldev." from serial: ".$virt_storage_sn);
+										$log->trace("Found virtual ldev: ".$virt_ldev." from serial: ".$virt_storage_sn);
                                         my $virt_storage_name = $vsms{$storagename}{$virt_storage_sn}{'name'};
                                         my $virt_storage_type = $vsms{$storagename}{$virt_storage_sn}{'type'};
                                         my $virtmetric = 'hds.perf.virtual.'.$virt_storage_type.'.'.$virt_storage_name.'.'.$target.'.DP.'.$pool_id.'.'.$virt_ldev.'.'.$storagename.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-                                        if($usetag) {
-                                            $virtmetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=virtual;storagetype='.$virt_storage_type.';storagename='.$virt_storage_name.';type=dp;pool_id='.$pool_id.';'.$taglabel.';phys_storagename='.$storagename.' '.$metric_value.' '.$graphitetime;
-                                        }
+										if($usetag) {
+											$virtmetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=virtual;storagetype='.$virt_storage_type.';storagename='.$virt_storage_name.';type=dp;pool_id='.$pool_id.';'.$taglabel.';phys_storagename='.$storagename.' '.$metric_value.' '.$graphitetime;
+										}
                                         toGraphite($virtmetric);
                                     }
                                 }
                             }
                         } else {
                             $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-                            if($usetag) {
-                                $labelcontent =~ s/\./_/g;
-                                $graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';unit='.$target.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
-                            }
+							if($usetag) {
+								$labelcontent =~ s/\./_/g;
+								$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';unit='.$target.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+							}
                         }
                         toGraphite($graphitemetric);
                         $interval = $values[$header{"INTERVAL"}{"position"}];
@@ -565,9 +566,9 @@ sub initializereporter {
     $instance = $htnm_agents{$serial}{"instanceName"};
     $instance_hostname = $htnm_agents{$serial}{"hostName"};
     if($instance eq "" or $instance_hostname eq "") {
-    $log->error("No HTNM / HIAA / Analyzer Instance found for ".$storagename."! Please check");
-    stopservice();
-    exit(1);    
+	$log->error("No HTNM / HIAA / Analyzer Instance found for ".$storagename."! Please check");
+	stopservice();
+	exit(1);	
     }
     my $metricfile = $metricpath.'/'.$storagetype.'_realtime_metrics.conf';
 
@@ -640,7 +641,7 @@ sub checkreporter {
                 }
             }
         }
-        if($livecounter > 60) {
+        if($livecounter > 6) {
             alive();
             $livecounter = 0;
         }
@@ -655,7 +656,7 @@ sub initsocket {
         PeerPort => $graphite_port,
         Proto => 'tcp',
         );
-        $log->logdie("cannot connect to the server $!") unless $socket;
+        die "cannot connect to the server $!\n" unless $socket;
         setsockopt($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
         $log->debug("Opening connection ".$socket->sockhost().":".$socket->sockport()." => ".$socket->peerhost().":".$socket->peerport());
 }
@@ -698,8 +699,18 @@ sub toGraphite() {
 # Sub to initialize Systemd Service
 
 sub initservice {
-    notify( READY => 1 );
-    $log->trace("Service is initialized...");
+    if(defined $ENV{'NOTIFY_SOCKET'}) {    
+        if($mainpid == $$) {
+        	my $sock = IO::Socket::UNIX->new(
+            	Type => SOCK_DGRAM(),
+	            Peer => $ENV{'NOTIFY_SOCKET'},
+    	    ) or $log->logdie("Unable to open socket for systemd communication");
+			print $sock "READY=1\n";
+            $log->info("Service is initialized...");
+        }
+    } else {
+        $log->trace("Looks like we are not runnings as systemd-service!");
+    }
 }
 
 
@@ -707,22 +718,55 @@ sub initservice {
 
 sub servicestatus {
     my $message = $_[0];
-    notify( STATUS => $message );
-    $log->trace("Status message: ".$message." is send to service...");
+    if(defined $ENV{'NOTIFY_SOCKET'}) {
+		if($mainpid == $$) {
+            my $sock = IO::Socket::UNIX->new(
+                Type => SOCK_DGRAM(),
+                Peer => $ENV{'NOTIFY_SOCKET'},
+            ) or $log->logdie("Unable to open socket for systemd communication");
+			print $sock "STATUS=$message\n";
+            $log->trace("Servicemessage has been send: ".$message);
+			close($sock);
+        }
+    } else {
+        $log->trace("Looks like we are not runnings as systemd-service!");
+    }
 }
 
 # Sub to signal a stop of the script to the service when running as Daemon
 
 sub stopservice {
-    notify ( STOPPING => 1 )
+    if(defined $ENV{'NOTIFY_SOCKET'}) {
+		if($mainpid == $$) {
+            my $sock = IO::Socket::UNIX->new(
+                Type => SOCK_DGRAM(),
+                Peer => $ENV{'NOTIFY_SOCKET'},
+            ) or $log->logdie("Unable to open socket for systemd communication");
+            print $sock "STOPPING=1\n";
+            $log->info("Service is shutting down...");
+			close($sock);
+        }
+    } else {
+        $log->trace("Looks like we are not runnings as systemd-service!");
+    }
 }
 
 # Sub to send heartbeat to watchdog of Systemd service when running as Daemon.
 
 sub alive {
-    notify ( WATCHDOG => 1 );
-    if($loglevel eq "TRACE") {
-        $log->trace("Heartbeat is send to watchdog of service...");
+    if(defined $ENV{'NOTIFY_SOCKET'}) {
+		if($mainpid == $$) {
+            my $sock = IO::Socket::UNIX->new(
+                Type => SOCK_DGRAM(),
+                Peer => $ENV{'NOTIFY_SOCKET'},
+            ) or $log->logdie("Unable to open socket for systemd communication");
+            print $sock "WATCHDOG=1\n";
+            $log->trace("Watchdog message has been send to systemd...");
+			close($sock);
+        }
+	
+    } else {
+        $log->trace("Looks like we are not runnings as systemd-service!");
     }
 }
 
@@ -753,6 +797,7 @@ if($ssl_verify == 0) {
 } else {
     $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 1 });
 }
+
 
 initservice();
 servicestatus('Getting agents...');

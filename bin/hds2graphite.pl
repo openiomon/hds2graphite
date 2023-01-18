@@ -341,7 +341,6 @@ sub registerservice {
                     print $sfh "StartLimitBurst=10\n\n";
                 }
                 print $sfh "[Service]\n";
-                print $sfh "Environment=\"PERL5LIB=".$libdir."perl5/:".$libdir."perl5/x86_64-linux-thread-multi/:".join(":",@INC)."\"\n";
                 print $sfh "User=".$serviceuser."\n";
                 print $sfh "Group=".$servicegroup."\n";
                 print $sfh "Type=notify\n";
@@ -391,7 +390,6 @@ sub registerservice {
                                    print $sfh "StartLimitBurst=10\n\n";
                                 }
                                 print $sfh "[Service]\n";
-                                print $sfh "Environment=\"PERL5LIB=".$libdir."perl5/:".$libdir."perl5/x86_64-linux-thread-multi/:".join(":",@INC)."\"\n";
                                 print $sfh "User=".$serviceuser."\n";
                                 print $sfh "Group=".$servicegroup."\n";
                                 print $sfh "Type=notify\n";
