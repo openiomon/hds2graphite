@@ -1644,7 +1644,7 @@ sub archiveexporttooldata {
 
 sub deleteexporttoolarchives {
     if(-d $archivepath.$storagename) {
-        opendir (DIR, $archivepath.$storagename) or $lof->logdie('Failed to open Direcory! '.$!);
+        opendir (DIR, $archivepath.$storagename) or $log->logdie('Failed to open Direcory! '.$!);
         while (my $file = readdir(DIR)) {
             if($file=~".tar.gz") {
                 my $creationtime = stat($archivepath.$storagename."/".$file)->ctime;
