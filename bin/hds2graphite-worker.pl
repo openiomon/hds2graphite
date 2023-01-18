@@ -40,7 +40,7 @@ my $loglevel = "INFO";
 my %args;  # variable to store command line options for use with getopts
 my $log; # log4perl logger
 
-my $logile = ""; # Logfile definition => provided by config file
+my $logfile = ""; # Logfile definition => provided by config file
 my $etlogfile = ""; # Logfile location for Export Tool => provided by config file
 
 my $conf = ""; #location of the script configuration file => is passed to the script
