@@ -269,8 +269,8 @@ sub readconfig {
                             my @values = split ("=",$configline);
                             $maxmetricsperminute = $values[1];
                         } elsif ($configline =~ "ssl_verfiy_host") {
-							$arrays{$conf_storagename}{"ssl_verfiy_host"} = $values[1];
-    					}
+                            $arrays{$conf_storagename}{"ssl_verfiy_host"} = $values[1];
+                        }
                     }
                 }
             }
@@ -319,7 +319,7 @@ sub http_get {
     $req->header('Content-Type' => 'application/json');
     $req->authorization_basic($htnm_user,$htnm_passwd);
     my $curlcmd = 'curl -ks -X GET -H "Content-Type: application/json" -u '.$htnm_user.':'.$htnm_passwd.' -i '.$geturl;
-	my $debugcmd = 'curl -ks -X GET -H "Content-Type: application/json" -u '.$htnm_user.':xxxxxxxxx'.' -i '.$geturl;
+    my $debugcmd = 'curl -ks -X GET -H "Content-Type: application/json" -u '.$htnm_user.':xxxxxxxxx'.' -i '.$geturl;
     $log->debug($debugcmd);
     my $resp = $ua->request($req);
     if ($resp->is_success) {
@@ -456,31 +456,31 @@ sub reportmetric {
                         my $label = $labels[$i];
                         if($i==0) {
                             if(defined $header{$label}{"position"}) {
-								if($usetag) {
-									$taglabel=lc($label).'='.$values[$header{$label}{"position"}];
-								} 
+                                if($usetag) {
+                                    $taglabel=lc($label).'='.$values[$header{$label}{"position"}];
+                                } 
 	                            $labelcontent=$values[$header{$label}{"position"}];
                             } else {
-								if($usetag) {
-									$taglabel='label='.$label;
-								}
-	                            $labelcontent=$label;
+                                if($usetag) {
+                                    $taglabel='label='.$label;
+                                }
+                            $labelcontent=$label;
                             }
                         } else {
                             if(defined $header{$label}{"position"}) {
-								if($usetag) {
-									$taglabel.=';'.lc($label).'='.$values[$header{$label}{"position"}];
-								}
-	                            $labelcontent.='.'.$values[$header{$label}{"position"}];
+                                if($usetag) {
+                                    $taglabel.=';'.lc($label).'='.$values[$header{$label}{"position"}];
+                                }
+                                $labelcontent.='.'.$values[$header{$label}{"position"}];
                             } else {
-								if($usetag) {
+                                if($usetag) {
                                     $taglabel='label='.$label;
                                 }
-	                            $labelcontent.='.'.$label;
+                                $labelcontent.='.'.$label;
                             }
                         }
                         $labelcontent =~s/\"//g;
-						$taglabel =~s/\"//g;
+                        $taglabel =~s/\"//g;
                     }
                     foreach my $metric (@{$metrics{$unit}}) {
                         my $metric_value = $values[$header{$metric}{"position"}];
@@ -514,17 +514,17 @@ sub reportmetric {
                             my $mp_id = $ldevs{$labelcontent}{'mp_id'};
                             if ($parity_grp ne '') {
                                 $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.PG.'.$parity_grp.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-								if($usetag) {
-									$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';type=pg;pg_id='.$parity_grp.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
-								}
+                                if($usetag) {
+                                    $graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';type=pg;pg_id='.$parity_grp.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+                                }
                             } else {
                                 if($pool_id ne '') {
                                     $pool_id = sprintf("%03d",$pool_id);
                                     $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.DP.'.$pool_id.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
                                     my $mpmetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.PRCS.'.$mp_id.'.LDEV.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-				    				if($usetag) {
-										$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';mp_id='.$mp_id.';type=dp;pool_id='.$pool_id.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
-				    				}
+                                    if($usetag) {
+                                        $graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';mp_id='.$mp_id.';type=dp;pool_id='.$pool_id.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+                                    }
                                     if($ldevs{$labelcontent}{'vldev_id'} ne '') {
                                         my $virt_ldev = $ldevs{$labelcontent}{'vldev_id'};
                                         my $virt_storage_sn = $ldevs{$labelcontent}{'vsn'};
@@ -532,19 +532,19 @@ sub reportmetric {
                                         my $virt_storage_name = $vsms{$storagename}{$virt_storage_sn}{'name'};
                                         my $virt_storage_type = $vsms{$storagename}{$virt_storage_sn}{'type'};
                                         my $virtmetric = 'hds.perf.virtual.'.$virt_storage_type.'.'.$virt_storage_name.'.'.$target.'.DP.'.$pool_id.'.'.$virt_ldev.'.'.$storagename.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-										if($usetag) {
-											$virtmetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=virtual;storagetype='.$virt_storage_type.';storagename='.$virt_storage_name.';type=dp;pool_id='.$pool_id.';'.$taglabel.';phys_storagename='.$storagename.' '.$metric_value.' '.$graphitetime;
-										}
+                                        if($usetag) {
+                                            $virtmetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=virtual;storagetype='.$virt_storage_type.';storagename='.$virt_storage_name.';type=dp;pool_id='.$pool_id.';'.$taglabel.';phys_storagename='.$storagename.' '.$metric_value.' '.$graphitetime;
+                                        }
                                         toGraphite($virtmetric);
                                     }
                                 }
                             }
                         } else {
                             $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
-							if($usetag) {
-								$labelcontent =~ s/\./_/g;
-								$graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';unit='.$target.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
-							}
+                            if($usetag) {
+                                $labelcontent =~ s/\./_/g;
+                                $graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';unit='.$target.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
+                            }
                         }
                         toGraphite($graphitemetric);
                         $interval = $values[$header{"INTERVAL"}{"position"}];
@@ -669,30 +669,30 @@ sub closesocket {
 }
 
 sub toGraphite() {
-        $socketcnt+=1;
-        my $message = $_[0];
-        $socket->send($message."\n");
-        # not every message will be delayed to allow quick systems to be utilized. Delay will only happen when the delay time is larger than 0ns since nanosleep(0) will consume time.
-        if(($socketdelay>0)&&!($socketcnt % $delaymetric)) {
-            nanosleep($socketdelay);
-        }
-        # every 100.000 inserts we will check how long it takes for 100.000 in obejcts to insert. The delay will be adjusted based on this result compared to the maximum amount of metrics that should be imported.
-        if($socketcnt>=100000) {
-            my $elapsed = tv_interval ( $sockettimer, [gettimeofday]);
-                my $metricsperminute = 60/$elapsed*100000;
-                if($socketdelay>0) {
-                    $socketdelay = int($socketdelay*($metricsperminute/$maxmetricsperminute));
-                        # in case of running as service avoid that oversized delay will trigger the watchdog
-                        if($socketdelay > $maxdelay) {
-                                  $socketdelay = $maxdelay;
-                        }
-            } else {
-                    # if the delay was going down to 0ns there need to be a possibility to increase the delay again starting with 1us.
-                    $socketdelay = int(1000*($metricsperminute/$maxmetricsperminute));
+    $socketcnt+=1;
+    my $message = $_[0];
+    $socket->send($message."\n");
+    # not every message will be delayed to allow quick systems to be utilized. Delay will only happen when the delay time is larger than 0ns since nanosleep(0) will consume time.
+    if(($socketdelay>0)&&!($socketcnt % $delaymetric)) {
+        nanosleep($socketdelay);
+    }
+    # every 100.000 inserts we will check how long it takes for 100.000 in obejcts to insert. The delay will be adjusted based on this result compared to the maximum amount of metrics that should be imported.
+    if($socketcnt>=100000) {
+        my $elapsed = tv_interval ( $sockettimer, [gettimeofday]);
+        my $metricsperminute = 60/$elapsed*100000;
+        if($socketdelay>0) {
+            $socketdelay = int($socketdelay*($metricsperminute/$maxmetricsperminute));
+            # in case of running as service avoid that oversized delay will trigger the watchdog
+            if($socketdelay > $maxdelay) {
+                $socketdelay = $maxdelay;
             }
-            $log->debug("Elapsed time for last 100.000 Metrics: ".sprintf("%.2f",$elapsed)."s => metrics per minute: ".sprintf("%.2f",$metricsperminute)." new delay: ".$socketdelay);
-            $sockettimer = [gettimeofday];
-            $socketcnt = 0;
+        } else {
+            # if the delay was going down to 0ns there need to be a possibility to increase the delay again starting with 1us.
+            $socketdelay = int(1000*($metricsperminute/$maxmetricsperminute));
+        }
+        $log->debug("Elapsed time for last 100.000 Metrics: ".sprintf("%.2f",$elapsed)."s => metrics per minute: ".sprintf("%.2f",$metricsperminute)." new delay: ".$socketdelay);
+        $sockettimer = [gettimeofday];
+        $socketcnt = 0;
     }
 }
 
@@ -703,10 +703,11 @@ sub initservice {
         if($mainpid == $$) {
         	my $sock = IO::Socket::UNIX->new(
             	Type => SOCK_DGRAM(),
-	            Peer => $ENV{'NOTIFY_SOCKET'},
+                Peer => $ENV{'NOTIFY_SOCKET'},
     	    ) or $log->logdie("Unable to open socket for systemd communication");
-			print $sock "READY=1\n";
+            print $sock "READY=1\n";
             $log->info("Service is initialized...");
+            close($sock)
         }
     } else {
         $log->trace("Looks like we are not runnings as systemd-service!");
@@ -719,14 +720,14 @@ sub initservice {
 sub servicestatus {
     my $message = $_[0];
     if(defined $ENV{'NOTIFY_SOCKET'}) {
-		if($mainpid == $$) {
+        if($mainpid == $$) {
             my $sock = IO::Socket::UNIX->new(
                 Type => SOCK_DGRAM(),
                 Peer => $ENV{'NOTIFY_SOCKET'},
             ) or $log->logdie("Unable to open socket for systemd communication");
-			print $sock "STATUS=$message\n";
+            print $sock "STATUS=$message\n";
             $log->trace("Servicemessage has been send: ".$message);
-			close($sock);
+            close($sock);
         }
     } else {
         $log->trace("Looks like we are not runnings as systemd-service!");
@@ -737,14 +738,14 @@ sub servicestatus {
 
 sub stopservice {
     if(defined $ENV{'NOTIFY_SOCKET'}) {
-		if($mainpid == $$) {
+        if($mainpid == $$) {
             my $sock = IO::Socket::UNIX->new(
                 Type => SOCK_DGRAM(),
                 Peer => $ENV{'NOTIFY_SOCKET'},
             ) or $log->logdie("Unable to open socket for systemd communication");
             print $sock "STOPPING=1\n";
             $log->info("Service is shutting down...");
-			close($sock);
+            close($sock);
         }
     } else {
         $log->trace("Looks like we are not runnings as systemd-service!");
@@ -755,16 +756,15 @@ sub stopservice {
 
 sub alive {
     if(defined $ENV{'NOTIFY_SOCKET'}) {
-		if($mainpid == $$) {
+        if($mainpid == $$) {
             my $sock = IO::Socket::UNIX->new(
                 Type => SOCK_DGRAM(),
                 Peer => $ENV{'NOTIFY_SOCKET'},
             ) or $log->logdie("Unable to open socket for systemd communication");
             print $sock "WATCHDOG=1\n";
             $log->trace("Watchdog message has been send to systemd...");
-			close($sock);
+            close($sock);
         }
-	
     } else {
         $log->trace("Looks like we are not runnings as systemd-service!");
     }
