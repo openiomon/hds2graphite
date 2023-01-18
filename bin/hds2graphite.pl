@@ -304,7 +304,7 @@ sub registerservice {
             my @parts = split(' ',$systemdout);
             $systemdver = $parts[1];
         } else {
-            print ("Unable to evaluate systemd version using command: ".$systemdcmd." - Please check!");
+            console("Unable to evaluate systemd version using command: ".$systemdcmd." - Please check!");
             exit(1);
         }
     } else {
@@ -371,46 +371,45 @@ sub registerservice {
                 exit(1);
             }
             console("Registering realtime service for ".$storagename." (Type: ".$storage{$storagename}{'type'}." / S/N: ".$storage{$storagename}{'serial'}.")");
-                        my $servicefile = '/usr/lib/systemd/system/hds2graphite-rt-'.$storagename.'.service';
-                        if(-f $servicefile) {
-                                console("There is already a service with the name hds2graphite-rt-".$storagename." registerd. You can either start, stop or restart the service. For updates to servicefile please deregister and register again.");
-                        } else {
-
-                                my $sfh;
-                                open $sfh, '>', $servicefile or die "Can't open file: $!";
-
-                                print $sfh "[Unit]\n";
-                                print $sfh "Description=HDS2GRAPHITE Realtime Service for ".$storagename." (Type: ".$storage{$storagename}{'type'}." / S/N: ".$storage{$storagename}{'serial'}.")\n";
-                                print $sfh "Documentation=http://www.openiomon.org\n";
-                                print $sfh "Wants=network-online.target\n";
-                                print $sfh "After=network-online.target\n";
-                                print $sfh "After=go-carbon.service\n";
-                                if($systemdver >=230) {
-                                   print $sfh "StartLimitIntervalSec=400\n";
-                                   print $sfh "StartLimitBurst=10\n\n";
-                                }
-                                print $sfh "[Service]\n";
-                                print $sfh "User=".$serviceuser."\n";
-                                print $sfh "Group=".$servicegroup."\n";
-                                print $sfh "Type=notify\n";
-                                print $sfh "Restart=always\n";
-                                print $sfh "RestartSec=30\n";
-                                if($systemdver <230) {
-                                    print $sfh "StartLimitInterval=400\n";
-                                    print $sfh "StartLimitBurst=10\n";
-                                }
-                                print $sfh "WatchdogSec=".$watchdog."\n";
-                                print $sfh "WorkingDirectory=".$workdir."\n";
-                                print $sfh "RuntimeDirectoryMode=0750\n";
-                                print $sfh "StandardOutput=".$stdoutopt."\n";
-                                print $sfh "StandardError=".$stderropt."\n";
-                                print $sfh "ExecStart=".$workdir."bin/hds2graphite-realtime.pl\t\t\t\\\n";
-                                print $sfh "\t\t-conf ".$workdir."conf/hds2graphite.conf\t\\\n";
-                                print $sfh "\t\t-storagesystem ".$storagename."\n";
-                                print $sfh "[Install]\n";
-                                print $sfh "WantedBy=multi-user.target\n";
-                                close($sfh);
-                                console("Servicefile: ".$servicefile." has been created!");
+            my $servicefile = '/usr/lib/systemd/system/hds2graphite-rt-'.$storagename.'.service';
+            if(-f $servicefile) {
+                console("There is already a service with the name hds2graphite-rt-".$storagename." registerd. You can either start, stop or restart the service. For updates to servicefile please deregister and register again.");
+            } else {
+                my $sfh;
+                open $sfh, '>', $servicefile or die "Can't open file: $!";
+                
+                print $sfh "[Unit]\n";
+                print $sfh "Description=HDS2GRAPHITE Realtime Service for ".$storagename." (Type: ".$storage{$storagename}{'type'}." / S/N: ".$storage{$storagename}{'serial'}.")\n";
+                print $sfh "Documentation=http://www.openiomon.org\n";
+                print $sfh "Wants=network-online.target\n";
+                print $sfh "After=network-online.target\n";
+                print $sfh "After=go-carbon.service\n";
+                if($systemdver >=230) {
+                    print $sfh "StartLimitIntervalSec=400\n";
+                    print $sfh "StartLimitBurst=10\n\n";
+                }
+                print $sfh "[Service]\n";
+                print $sfh "User=".$serviceuser."\n";
+                print $sfh "Group=".$servicegroup."\n";
+                print $sfh "Type=notify\n";
+                print $sfh "Restart=always\n";
+                print $sfh "RestartSec=30\n";
+                if($systemdver <230) {
+                    print $sfh "StartLimitInterval=400\n";
+                    print $sfh "StartLimitBurst=10\n";
+                }
+                print $sfh "WatchdogSec=".$watchdog."\n";
+                print $sfh "WorkingDirectory=".$workdir."\n";
+                print $sfh "RuntimeDirectoryMode=0750\n";
+                print $sfh "StandardOutput=".$stdoutopt."\n";
+                print $sfh "StandardError=".$stderropt."\n";
+                print $sfh "ExecStart=".$workdir."bin/hds2graphite-realtime.pl\t\t\t\\\n";
+                print $sfh "\t\t-conf ".$workdir."conf/hds2graphite.conf\t\\\n";
+                print $sfh "\t\t-storagesystem ".$storagename."\n";
+                print $sfh "[Install]\n";
+                print $sfh "WantedBy=multi-user.target\n";
+                close($sfh);
+                console("Servicefile: ".$servicefile." has been created!");
             }
         }
     }
@@ -421,9 +420,9 @@ sub registerservice {
 sub deregisterservice {
     my $storagename = $_[0];
     if($storagename eq 'ALL') {
-                foreach my $storagesystem (sort keys %storage) {
-                        deregisterservice($storagesystem);
-                }
+        foreach my $storagesystem (sort keys %storage) {
+            deregisterservice($storagesystem);
+        }
     } else {
         if(!$realtime) {
             console("Trying to deregister service for storagesystem ".$storagename."...");
@@ -438,16 +437,15 @@ sub deregisterservice {
             console("Service for ".$storagename." has been deregistered!");
         } else {
             console("Trying to deregister realtime service for storagesystem ".$storagename."...");
-                        if(!-f '/usr/lib/systemd/system/hds2graphite-rt-'.$storagename.'.service'){
-                                console("\tThere is no realtime service registered for ".$storagename."! Nothing to do...");
-                                return(0);
-                        }
-                        service($storagename,'stop');
-                        service($storagename,'disable');
-                        unlink '/usr/lib/systemd/system/hds2graphite-rt-'.$storagename.'.service';
-                        $log->debug("Executed unlink for file /usr/lib/systemd/system/hds2graphite-rt".$storagename.".service");
-                        console("Realtime service for ".$storagename." has been deregistered!");
-
+            if(!-f '/usr/lib/systemd/system/hds2graphite-rt-'.$storagename.'.service'){
+                console("\tThere is no realtime service registered for ".$storagename."! Nothing to do...");
+                return(0);
+            }
+            service($storagename,'stop');
+            service($storagename,'disable');
+            unlink '/usr/lib/systemd/system/hds2graphite-rt-'.$storagename.'.service';
+            $log->debug("Executed unlink for file /usr/lib/systemd/system/hds2graphite-rt".$storagename.".service");
+            console("Realtime service for ".$storagename." has been deregistered!");
         }
     }
 }
@@ -458,9 +456,9 @@ sub service {
     my $storagename = $_[0];
     my $action = $_[1];
     if($storagename eq 'ALL') {
-                foreach my $storagesystem (sort keys %storage) {
-                        service($storagesystem,$action);
-                }
+        foreach my $storagesystem (sort keys %storage) {
+            service($storagesystem,$action);
+        }
     } else {
         if(!$realtime) {
             console("Trying to ".$action." service for storagesystem ".$storagename."...");
@@ -478,18 +476,18 @@ sub service {
             }
         } else {
             console("Trying to ".$action." realtime service for storagesystem ".$storagename."...");
-                        if(!-f '/usr/lib/systemd/system/hds2graphite-rt-'.$storagename.'.service'){
-                                console("\tRealtime-service cannot be found for storagesystem ".$storagename.". Please register realtime service or correct defined storagesystem or verify configuration file!");
-                                return(0);
-                        }
-                        my $cmd = 'systemctl '.$action.' hds2graphite-rt-'.$storagename.' > /dev/null 2>&1';
-                        $log->debug("Running system command: ".$cmd);
-                        my $rc = system($cmd);
-                        if($rc==0) {
-                                console("Realtime service ".$action."ed for storagesystem ".$storagename."!");
-                        } else {
-                                console("Failed to ".$action." realtime service for storagesystem ".$storagename."! Please investigate!");
-                        }
+            if(!-f '/usr/lib/systemd/system/hds2graphite-rt-'.$storagename.'.service'){
+                console("\tRealtime-service cannot be found for storagesystem ".$storagename.". Please register realtime service or correct defined storagesystem or verify configuration file!");
+                return(0);
+            }
+            my $cmd = 'systemctl '.$action.' hds2graphite-rt-'.$storagename.' > /dev/null 2>&1';
+            $log->debug("Running system command: ".$cmd);
+            my $rc = system($cmd);
+            if($rc==0) {
+                console("Realtime service ".$action."ed for storagesystem ".$storagename."!");
+            } else {
+                console("Failed to ".$action." realtime service for storagesystem ".$storagename."! Please investigate!");
+            }
         }
     }
 }
@@ -499,9 +497,9 @@ sub service {
 sub servicestatus {
     my $storagename = $_[0];
     if($storagename eq 'ALL') {
-                foreach my $storagesystem (sort keys %storage) {
-                       servicestatus($storagesystem);
-                }
+        foreach my $storagesystem (sort keys %storage) {
+            servicestatus($storagesystem);
+        }
     } else {
         if(!$realtime) {
             $log->info("Gettings state and status of service for storagesystem ".$storagename);
@@ -561,43 +559,41 @@ sub servicestatus {
             }
         } else {
             $log->info("Gettings state and status of realtime service for storagesystem ".$storagename);
-                        console($storagename." (realtime service):");
-                        if(!-f '/usr/lib/systemd/system/hds2graphite-rt-'.$storagename.'.service'){
-                                console("\tService cannot be found for storagesystem defined in configuration file. Please register service or correct confinguration file!");
-                                return(0);
-                        }
-                        my $querycmd = "systemctl status hds2graphite-rt-".$storagename;
-                        my @result = `$querycmd`;
-                        my $state = "";
-                        foreach my $line (@result) {
-                                if ($line =~ "Loaded:") {
-                                        my @values = split(":",$line);
-                                        my $loaded = $values[1];
-                                        chomp($loaded);
-                                        console("\tLoaded:\t\t\t".$loaded);
-                                } elsif ($line =~ "Active:"){
-                                        my @values = split(":",$line);
-
-                                        for (my $i=1;$i<(scalar(@values));$i+=1) {
-                                                $state .= $values[$i].":";
-                                        }
-                                        chop($state);
-                                        chomp($state);
-                                        console("\tActive:\t\t\t".$state);
-                                } elsif ($line =~ "Status:"){
-                                        my @values = split(":",$line);
-                                        my $status = $values[1];
-                                        $status =~ s/\"//g;
-                                        chomp($status);
-                                        if($state =~ "inactive") {
-                                                console("\tLast status was:\t".$status);
-                                        } else {
-                                                console("\tStatus:\t\t\t".$status);
-                                        }
-                                }
-                        }
+            console($storagename." (realtime service):");
+            if(!-f '/usr/lib/systemd/system/hds2graphite-rt-'.$storagename.'.service'){
+                console("\tService cannot be found for storagesystem defined in configuration file. Please register service or correct confinguration file!");
+                return(0);
+            }
+            my $querycmd = "systemctl status hds2graphite-rt-".$storagename;
+            my @result = `$querycmd`;
+            my $state = "";
+            foreach my $line (@result) {
+                if ($line =~ "Loaded:") {
+                    my @values = split(":",$line);
+                    my $loaded = $values[1];
+                    chomp($loaded);
+                    console("\tLoaded:\t\t\t".$loaded);
+                } elsif ($line =~ "Active:"){
+                    my @values = split(":",$line);
+                    for (my $i=1;$i<(scalar(@values));$i+=1) {
+                        $state .= $values[$i].":";
+                    }
+                    chop($state);
+                    chomp($state);
+                    console("\tActive:\t\t\t".$state);
+                } elsif ($line =~ "Status:"){
+                    my @values = split(":",$line);
+                    my $status = $values[1];
+                    $status =~ s/\"//g;
+                    chomp($status);
+                    if($state =~ "inactive") {
+                        console("\tLast status was:\t".$status);
+                    } else {
+                        console("\tStatus:\t\t\t".$status);
+                    }
+                }
+            }
         }
-
     }
 }
 
