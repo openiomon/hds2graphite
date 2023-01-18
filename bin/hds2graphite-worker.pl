@@ -676,7 +676,7 @@ sub importmetric {
         }
         my $metricstatcnt = 0;
         $log->info("Importing: ".$filename);
-        open my $inputfp, '<', $filename or die "Can't open file: $!";
+        open my $inputfp, '<', $filename or $log->logdie("Can't open file: $!");
         my $linecnt = 1;
         my $table = $config{$filename}{"table"};
         my $firstlumetric = true;
@@ -912,8 +912,8 @@ sub createexporttoolconf {
         exit(1);
     }
 
-    open my $cmdtemplatefp, '<', $cmdtemplate or die "Can't open file: $!";
-    open my $cmdfilefp, '>', $cmdfile or die "Can't open file: $!";
+    open my $cmdtemplatefp, '<', $cmdtemplate or $log->logdie("Can't open file: $!");
+    open my $cmdfilefp, '>', $cmdfile or $log->logdie("Can't open file: $!");
     # For Gx00/Fx00 Systems the IPs of both controllers need to be specified...
     if(isPanama($arraytype{$serial}) || isPanama2($arraytype{$serial})) {
         print $cmdfilefp "ip ".$systemips{$serial}{"SVP"}."\n";
@@ -1008,7 +1008,7 @@ sub startexporttool {
 sub clearexporttoollogs {
     my $exporttoollog = $etlogfile.$serial;
     if(-d $exporttoollog) {
-        opendir (DIR, $exporttoollog) or die 'Failed to open Direcory! '.$!;
+        opendir (DIR, $exporttoollog) or $log->logdie('Failed to open Direcory! '.$!);
         while (my $file = readdir(DIR)) {
             if($file=~".log") {
                 my $creationtime = stat($exporttoollog."/".$file)->ctime;
@@ -1031,7 +1031,7 @@ sub createhorcmconf {
     }
     $log->info("Creating horcm".$horcminst.".conf in ".$horcmconfdir." !");
     my $horcminstfile = $horcmconfdir.'/horcm'.$horcminst.'.conf';
-    open my $horcmfilefp, '>', $horcminstfile or die "Can't open $horcminstfile because of: $!";
+    open my $horcmfilefp, '>', $horcminstfile or $log->logdie("Can't open $horcminstfile because of: $!");
     print $horcmfilefp "HORCM_MON\n";
     # HORCM Serviceport = 11 + Instance-Numer 3-digits with leading 0
     print $horcmfilefp "localhost       11".sprintf('%03s',$horcminst)."   3000    6000\n";
@@ -1079,7 +1079,7 @@ sub runccicmd {
         if ($res) {
             my $rc = $?>>8;
             $log->debug("CCI Command Fork for command ".$cmd." with PID $res ended successful with returncode ".$rc);
-            open(my $fhr,'<',$exchangefile) or die "Can't open < ".$exchangefile.": $!";
+            open(my $fhr,'<',$exchangefile) or $log->logdie("Can't open < ".$exchangefile.": $!");
             while(<$fhr>) {
                 push(@resultlines,$_);
             }
@@ -1583,7 +1583,7 @@ sub initsocket {
         PeerPort => $graphiteport,
         Proto => 'tcp',
     );
-    die "cannot connect to the server $!\n" unless $socket;
+    $log->logdie("cannot connect to the server $!") unless $socket;
     setsockopt($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
     $log->debug("Opening connection ".$socket->sockhost().":".$socket->sockport()." => ".$socket->peerhost().":".$socket->peerport());
 }
@@ -1648,7 +1648,7 @@ sub archiveexporttooldata {
 
 sub deleteexporttoolarchives {
     if(-d $archivepath.$storagename) {
-        opendir (DIR, $archivepath.$storagename) or die 'Failed to open Direcory! '.$!;
+        opendir (DIR, $archivepath.$storagename) or $lof->logdie('Failed to open Direcory! '.$!);
         while (my $file = readdir(DIR)) {
             if($file=~".tar.gz") {
                 my $creationtime = stat($archivepath.$storagename."/".$file)->ctime;
@@ -1671,7 +1671,7 @@ sub readlastruntime {
     if (!-f $runfile) {
         $lastsuccessfulrun = 0;
     } else {
-        open(my $fh,'<',$runfile) or die "Can't open < ".$runfile." to write last successul runtime: $!";
+        open(my $fh,'<',$runfile) or $log->logdie("Can't open ".$runfile." to read last successul runtime: $!");
         while(<$fh>) {
             my $line = $_;
             my @values = split(" ",$line);
@@ -1687,7 +1687,7 @@ sub writelastruntime {
     if (!-d $statusdir) {
         mkdir $statusdir;
     }
-    open(my $fh,'>',$runfile) or die "Can't open < ".$runfile." to write last successul runtime: $!";
+    open(my $fh,'>',$runfile) or $log->logdie("Can't open ".$runfile." to write last successul runtime: $!");
     print $fh $lastsuccessfulrun." ".$hourstoimport." ".$lastsuccessfulrunend;
     close $fh;
 }
