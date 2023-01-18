@@ -576,7 +576,7 @@ sub initializereporter {
         $log->error("Cannot find metric file for array type ".$storagetype.". Please check ".$metricfile);
         exit(1);
     } else {
-        open my $metricfh,'<',$metricfile or die "Cannot open File $!";
+        open my $metricfh,'<',$metricfile or $log->logdie("Cannot open File $!");
         my $unit = '';
         while(<$metricfh>) {
             my $line = $_;
@@ -656,7 +656,7 @@ sub initsocket {
         PeerPort => $graphite_port,
         Proto => 'tcp',
         );
-        die "cannot connect to the server $!\n" unless $socket;
+        $log->logdie ("cannot connect to the server $!") unless $socket;
         setsockopt($socket, SOL_SOCKET, SO_KEEPALIVE, 1);
         $log->debug("Opening connection ".$socket->sockhost().":".$socket->sockport()." => ".$socket->peerhost().":".$socket->peerport());
 }
