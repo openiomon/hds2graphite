@@ -216,9 +216,9 @@ sub readconfig {
                             $htnm_passwd = $values[1];
                             $htnm_passwd =~s/\s//g;
                         } elsif ($configline =~ "^ssl_verfiy_host") {
-							$ssl_verify = $values[1];
-							$ssl_verify =~s/\s//g;
-						}
+                            $ssl_verify = $values[1];
+                            $ssl_verify =~s/\s//g;
+                        }
                     }
                     when ("performance") {
                         my @values = split ("=",$configline);
