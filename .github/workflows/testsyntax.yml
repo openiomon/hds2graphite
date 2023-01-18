@@ -11,6 +11,7 @@ jobs:
       uses: shogo82148/actions-setup-perl@v1
       with:
         perl-version: '5.26'
+    - name: perl -V
+      run: perl -V
     - run: cpanm --installdeps .
-    - name: Check syntax 
-      run: for f in `find . -name "*.pm" -o -name "*.pl" -o -name "*.t"`; do perl -c $f; done
+    - run: prove -lv t
