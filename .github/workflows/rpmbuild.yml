@@ -6,9 +6,24 @@ name: RPM Build
 on: workflow_dispatch
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "build"
+
+jobs:  
+  perl:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Perl
+      uses: shogo82148/actions-setup-perl@v1
+      with:
+        perl-version: '5.26'
+        install-modules: File::stat Getopt::Long IO::Socket::INET IO::Socket::UNIX Log::Log4perl Time::HiRes Time::Local Time::Piece LWP::UserAgent
+    - name: perl -V
+      run: perl -V
+    - run: for f in `find . -name "hds2graphite*.pl"`; do perl -c $f; done
   build:
+  
+    needs: perl
+    
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
