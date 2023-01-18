@@ -7,7 +7,7 @@ prefix:     /opt
 Release:    0
 License:    GPL
 Group:      Applications/Internet
-BuildArch:  x86_64
+BuildArch:  noarch
 AutoReqProv: no
 URL:        https://github.com/openiomon/%{name}
 Source0:    https://github.com/openiomon/%{name}/%{name}-%{version}.tar.gz
