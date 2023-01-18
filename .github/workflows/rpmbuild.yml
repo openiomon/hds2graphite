@@ -15,7 +15,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     
     # Runs a community action
@@ -29,7 +29,7 @@ jobs:
       run: echo ${{steps.rpm.outputs.source_rpm_path}}
     
     - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
+      uses: actions/upload-artifact@v3
       with:
         # Artifact name
         name: Binary RPM
