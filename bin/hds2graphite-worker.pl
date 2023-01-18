@@ -255,10 +255,10 @@ sub setdefaults {
         $maxmetricsperminute = $graphiteconf{$serial}{"max_metrics_per_minute"};
     }
     if(defined $graphiteconf{$serial}{"metric_format"}) {
-		if($graphiteconf{$serial}{"metric_format"} =~ "graphite-tag") {
+        if($graphiteconf{$serial}{"metric_format"} =~ "graphite-tag") {
             $usetag = 1;
         } else {
-	    	$usetag = 0;
+            $usetag = 0;
         }
     }
     if(defined $exporttoolparams{$serial}{"enable_archive"}) {
@@ -331,7 +331,7 @@ sub is5000series {
     given($type) {
         when ("5100") {return true}
         when ("5200") {return true}
-        when ("5100") {return true}
+        when ("5500") {return true}
         when ("5600") {return true}
         default {return false}
     }
@@ -344,8 +344,8 @@ sub readconfig {
     open my $configfilefp, '<', $conf or die "Can't open file: $!";
     my $section = "";
     my $arraytype = "";
-        my $arrayserial = "";
-        my $storagename = "";
+    my $arrayserial = "";
+    my $storagename = "";
 
     while(<$configfilefp>) {
         my $configline = $_;
@@ -767,7 +767,7 @@ sub importmetric {
                             my $port = "";
                                 my $hsd = "";
                                 my $lu = "";
-								my $plainlu = "";
+                                my $plainlu = "";
                                 my @itemparts = split("_",$items[$i-2]);
                                 $port = $itemparts[0];
                                 my $luindex = (scalar @itemparts)-1;
@@ -814,11 +814,11 @@ sub importmetric {
                                     chop ($hsd);
                                     $hsdreference{$port}{$hsdindex}=$hsd;
                                     $metricstatcnt+=1;
-				    				if($usetag) {
-										toGraphite("hv_".lc($table)."_".lc($metric).";entity=physical;storagetype=".$type.";storagename=".$namereference{$serial}.";port=".$port.";hsd=".$hsd.";lu=".$plainlu.";ldev=".$ldev." ".$value." ".$epochtime);
-								    } else {	
-	                                    toGraphite("hds.perf.physical.".$type.".".$namereference{$serial}.".".$table.".".$port.".".$hsd.".".$lu.".".$metric." ".$value." ".$epochtime);
-									}
+                                    if($usetag) {
+                                        toGraphite("hv_".lc($table)."_".lc($metric).";entity=physical;storagetype=".$type.";storagename=".$namereference{$serial}.";port=".$port.";hsd=".$hsd.";lu=".$plainlu.";ldev=".$ldev." ".$value." ".$epochtime);
+                                    } else {	
+                                        toGraphite("hds.perf.physical.".$type.".".$namereference{$serial}.".".$table.".".$port.".".$hsd.".".$lu.".".$metric." ".$value." ".$epochtime);
+                                    }
                                     if (defined($ldevmapping{$ldev}{"rsgid"})) {
                                         my $rsgid = $ldevmapping{$ldev}{"rsgid"};
                                         if($rsgid != 0) {
@@ -826,11 +826,11 @@ sub importmetric {
                                                 $log->debug("Found virtual ldev 00:FF:FF for LU ".$luold." for LDEV ".$ldev." looks like LDEV might be GAD reserved but GAD pair is not in place");
                                             } else {
                                                 $lu =  $luold."-".$ldevmapping{$ldev}{"virtualldev"};
-												if($usetag) {
-													toGraphite("hv_".lc($table)."_".lc($metric).";entity=virtual;storagetype=".$vsms{$namereference{$serial}}{$rsgid}{"type"}.";storagename=".$vsms{$namereference{$serial}}{$rsgid}{"name"}.";port=".$port.";hsd=".$hsd.";lu=".$luold.";ldev=".$ldevmapping{$ldev}{"virtualldev"}.";physicalstoragename=".$namereference{$serial}." ".$value." ".$epochtime);
-												} else {
-	                                                toGraphite("hds.perf.virtual.".$vsms{$namereference{$serial}}{$rsgid}{"type"}.".".$vsms{$namereference{$serial}}{$rsgid}{"name"}.".".$table.".".$port.".".$hsd.".".$lu.".".$namereference{$serial}.".".$metric." ".$value." ".$epochtime);
-												}
+                                                if($usetag) {
+                                                    toGraphite("hv_".lc($table)."_".lc($metric).";entity=virtual;storagetype=".$vsms{$namereference{$serial}}{$rsgid}{"type"}.";storagename=".$vsms{$namereference{$serial}}{$rsgid}{"name"}.";port=".$port.";hsd=".$hsd.";lu=".$luold.";ldev=".$ldevmapping{$ldev}{"virtualldev"}.";physicalstoragename=".$namereference{$serial}." ".$value." ".$epochtime);
+                                                } else {
+                                                    toGraphite("hds.perf.virtual.".$vsms{$namereference{$serial}}{$rsgid}{"type"}.".".$vsms{$namereference{$serial}}{$rsgid}{"name"}.".".$table.".".$port.".".$hsd.".".$lu.".".$namereference{$serial}.".".$metric." ".$value." ".$epochtime);
+                                                }
                                             }
                                         }
                                     }
@@ -847,11 +847,11 @@ sub importmetric {
                                 #   $ldev = $ldevmapping{$ldev}{"virtualldev"};
                                 #}
                                 $metricstatcnt+=1;
-								if($usetag) {
-									toGraphite("hv_".lc($table)."_".lc($metric).";entity=physical;storagetype=".$type.";storagename=".$namereference{$serial}.";type=".$ldevtype.";p_id=".$entity.";ldev=".$ldev." ".$value." ".$epochtime);
-								} else {
-	                                toGraphite("hds.perf.physical.".$type.".".$namereference{$serial}.".".$table.".".$ldevtype.".".$entity.".".$ldev.".".$metric." ".$value." ".$epochtime);
-								}
+                                if($usetag) {
+                                    toGraphite("hv_".lc($table)."_".lc($metric).";entity=physical;storagetype=".$type.";storagename=".$namereference{$serial}.";type=".$ldevtype.";p_id=".$entity.";ldev=".$ldev." ".$value." ".$epochtime);
+                                } else {
+                                    toGraphite("hds.perf.physical.".$type.".".$namereference{$serial}.".".$table.".".$ldevtype.".".$entity.".".$ldev.".".$metric." ".$value." ".$epochtime);
+                                }
                                 if (defined($ldevmapping{$ldev}{"rsgid"})) {
                                     my $rsgid = $ldevmapping{$ldev}{"rsgid"};
                                     if($rsgid != 0) {
@@ -859,11 +859,11 @@ sub importmetric {
                                             $log->debug("Found virtual ldev 00:FF:FF for physical LDEV ".$ldev." looks like LDEV might be GAD reserved but GAD pair is not in place");
                                         } else {
                                             $ldev = $ldevmapping{$ldev}{"virtualldev"};
-											if($usetag) {
-												toGraphite("hv_".lc($table)."_".lc($metric).";entity=virtual;storagetype=".$vsms{$namereference{$serial}}{$rsgid}{"type"}.";storagename=".$vsms{$namereference{$serial}}{$rsgid}{"name"}.";type=".$ldevtype.";p_id=".$entity.";ldev=".$ldev.";physicalstoragename=".$namereference{$serial}." ".$value." ".$epochtime);
-											} else {
-	                                            toGraphite("hds.perf.virtual.".$vsms{$namereference{$serial}}{$rsgid}{"type"}.".".$vsms{$namereference{$serial}}{$rsgid}{"name"}.".".$table.".".$ldevtype.".".$entity.".".$ldev.".".$namereference{$serial}.".".$metric." ".$value." ".$epochtime);	
-											}
+                                            if($usetag) {
+                                                toGraphite("hv_".lc($table)."_".lc($metric).";entity=virtual;storagetype=".$vsms{$namereference{$serial}}{$rsgid}{"type"}.";storagename=".$vsms{$namereference{$serial}}{$rsgid}{"name"}.";type=".$ldevtype.";p_id=".$entity.";ldev=".$ldev.";physicalstoragename=".$namereference{$serial}." ".$value." ".$epochtime);
+                                            } else {
+                                                toGraphite("hds.perf.virtual.".$vsms{$namereference{$serial}}{$rsgid}{"type"}.".".$vsms{$namereference{$serial}}{$rsgid}{"name"}.".".$table.".".$ldevtype.".".$entity.".".$ldev.".".$namereference{$serial}.".".$metric." ".$value." ".$epochtime);	
+                                            }
                                         }
                                     }
                                 }
@@ -871,23 +871,19 @@ sub importmetric {
                         } elsif ($table eq "RC") {
                             # Remote copy only contains one file so the ENTITY field is not needed for inserting to graphite.
                             $metricstatcnt+=1;
-							if($usetag) {
-								toGraphite("hv_".lc($table)."_".lc($items[$i-2]).";entity=physical;storagetype=".$type.";storagename=".$namereference{$serial}." ".$value." ".$epochtime);
-							} else {
-	                            toGraphite("hds.perf.physical.".$type.".".$namereference{$serial}.".".$table.".".$items[$i-2]." ".$value." ".$epochtime);
-							}
+                            if($usetag) {
+                                toGraphite("hv_".lc($table)."_".lc($items[$i-2]).";entity=physical;storagetype=".$type.";storagename=".$namereference{$serial}." ".$value." ".$epochtime);
+                            } else {
+                                toGraphite("hds.perf.physical.".$type.".".$namereference{$serial}.".".$table.".".$items[$i-2]." ".$value." ".$epochtime);
+                            }
                         } else {
                             # All standard metrics are send out...
                             $metricstatcnt+=1;
-                            #print "Table: ".$table."\n";
-                            #print "Filename: ".$filename."\n";
-                            #print "Metric:".$metric."\n";
-                            #print "Items:".$items[$i-2]."\n";
-							if($usetag) {
-								toGraphite("hv_".lc($table)."_".lc($metric).";entity=physical;storagetype=".$type.";storagename=".$namereference{$serial}.";item=".$items[$i-2]." ".$value." ".$epochtime);
-							} else {
-	                            toGraphite("hds.perf.physical.".$type.".".$namereference{$serial}.".".$table.".".$items[$i-2].".".$metric." ".$value." ".$epochtime);
-							}
+                            if($usetag) {
+                                toGraphite("hv_".lc($table)."_".lc($metric).";entity=physical;storagetype=".$type.";storagename=".$namereference{$serial}.";item=".$items[$i-2]." ".$value." ".$epochtime);
+                            } else {
+                                toGraphite("hds.perf.physical.".$type.".".$namereference{$serial}.".".$table.".".$items[$i-2].".".$metric." ".$value." ".$epochtime);
+                            }
                         }
                     }
                 }
@@ -1407,21 +1403,21 @@ sub logpoolstats {
     # timestamp will be rounded to last full hour
     $now = int((int($now/3600))*3600);
     foreach my $poolid (sort keys (%poolstats)) {
-		if($usetag) {
-			toGraphite("hv_capacity_pool_total;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"capacity"}." ".$now);
-			toGraphite("hv_capacity_pool_used;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"used"}." ".$now);
-			toGraphite("hv_capacity_pool_percentused;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"percentused"}." ".$now);
-			toGraphite("hv_capacity_pool_percentavailable;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"percentavailable"}." ".$now);
-			toGraphite("hv_capacity_pool_volumecount;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"volcnt"}." ".$now);
-			toGraphite("hv_capacity_pool_available;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"available"}." ".$now);
-		} else {
-	        toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".capacity ".$poolstats{$poolid}{"capacity"}." ".$now);
-    	    toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".used ".$poolstats{$poolid}{"used"}." ".$now);
-	        toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".percentused ".$poolstats{$poolid}{"percentused"}." ".$now);
-    	    toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".percentavailable ".$poolstats{$poolid}{"percentavailable"}." ".$now);
-        	toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".volumecount ".$poolstats{$poolid}{"volcnt"}." ".$now);
-	        toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".available ".$poolstats{$poolid}{"available"}." ".$now);
-		}
+        if($usetag) {
+            toGraphite("hv_capacity_pool_total;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"capacity"}." ".$now);
+            toGraphite("hv_capacity_pool_used;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"used"}." ".$now);
+            toGraphite("hv_capacity_pool_percentused;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"percentused"}." ".$now);
+            toGraphite("hv_capacity_pool_percentavailable;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"percentavailable"}." ".$now);
+            toGraphite("hv_capacity_pool_volumecount;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"volcnt"}." ".$now);
+            toGraphite("hv_capacity_pool_available;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"available"}." ".$now);
+        } else {
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".capacity ".$poolstats{$poolid}{"capacity"}." ".$now);
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".used ".$poolstats{$poolid}{"used"}." ".$now);
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".percentused ".$poolstats{$poolid}{"percentused"}." ".$now);
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".percentavailable ".$poolstats{$poolid}{"percentavailable"}." ".$now);
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".volumecount ".$poolstats{$poolid}{"volcnt"}." ".$now);
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".available ".$poolstats{$poolid}{"available"}." ".$now);
+        }
     }
     closesocket();
 }
@@ -1467,19 +1463,19 @@ sub logldevstats {
         if(($usevirtualldev) && ($ldevmapping{$ldev}{"virtualldev"} ne "")) {
             $ldev = $ldevmapping{$ldev}{"virtualldev"};
         }
-		if($usetag) {
-			toGraphite("hv_capacity_ldev_total;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";ldevtype=".$type.";poolid=".$poolid." ".$capacity." ".$now);
-			toGraphite("hv_capacity_ldev_used;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";ldevtype=".$type.";poolid=".$poolid." ".$used." ".$now);
-			toGraphite("hv_capacity_ldev_tier1;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";ldevtype=".$type.";poolid=".$poolid." ".$tier1." ".$now);
-			toGraphite("hv_capacity_ldev_tier2;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";ldevtype=".$type.";poolid=".$poolid." ".$tier2." ".$now);
-			toGraphite("hv_capacity_ldev_tier3;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";ldevtype=".$type.";poolid=".$poolid." ".$tier3." ".$now);
-		} else {
-	        toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".ldev.".$type.".".$poolid.".".$ldev.".capacity ".$capacity." ".$now);
-    	    toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".ldev.".$type.".".$poolid.".".$ldev.".used ".$used." ".$now);
-        	toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".ldev.".$type.".".$poolid.".".$ldev.".tier1 ".$tier1." ".$now);
-	        toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".ldev.".$type.".".$poolid.".".$ldev.".tier2 ".$tier2." ".$now);
-    	    toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".ldev.".$type.".".$poolid.".".$ldev.".tier3 ".$tier3." ".$now);
-		}
+        if($usetag) {
+            toGraphite("hv_capacity_ldev_total;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";ldevtype=".$type.";poolid=".$poolid." ".$capacity." ".$now);
+            toGraphite("hv_capacity_ldev_used;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";ldevtype=".$type.";poolid=".$poolid." ".$used." ".$now);
+            toGraphite("hv_capacity_ldev_tier1;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";ldevtype=".$type.";poolid=".$poolid." ".$tier1." ".$now);
+            toGraphite("hv_capacity_ldev_tier2;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";ldevtype=".$type.";poolid=".$poolid." ".$tier2." ".$now);
+            toGraphite("hv_capacity_ldev_tier3;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";ldevtype=".$type.";poolid=".$poolid." ".$tier3." ".$now);
+        } else {
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".ldev.".$type.".".$poolid.".".$ldev.".capacity ".$capacity." ".$now);
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".ldev.".$type.".".$poolid.".".$ldev.".used ".$used." ".$now);
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".ldev.".$type.".".$poolid.".".$ldev.".tier1 ".$tier1." ".$now);
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".ldev.".$type.".".$poolid.".".$ldev.".tier2 ".$tier2." ".$now);
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".ldev.".$type.".".$poolid.".".$ldev.".tier3 ".$tier3." ".$now);
+        }
     }
     closesocket();
 }
@@ -1517,19 +1513,19 @@ sub loglustats {
                         if(($usevirtualldev) && ($ldevmapping{$ldev}{"virtualldev"} ne "")) {
                             $ldev = $ldevmapping{$ldev}{"virtualldev"};
                         }
-						if($usetag) {
-							toGraphite("hv_capacity_lu_total;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";lu=".$lu.";hsd=".$hsdname." ".$capacity." ".$now);
-							toGraphite("hv_capacity_lu_used;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";lu=".$lu.";hsd=".$hsdname." ".$used." ".$now);
-							toGraphite("hv_capacity_lu_tier1;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";lu=".$lu.";hsd=".$hsdname." ".$tier1." ".$now);
-							toGraphite("hv_capacity_lu_tier2;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";lu=".$lu.";hsd=".$hsdname." ".$tier2." ".$now);
-							toGraphite("hv_capacity_lu_tier3;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";lu=".$lu.";hsd=".$hsdname." ".$tier3." ".$now);
-						} else {
-	                        toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".lu.".$hsdname.".".$lu."-".$ldev.".capacity ".$capacity." ".$now);
-	                        toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".lu.".$hsdname.".".$lu."-".$ldev.".used ".$used." ".$now);
-    	                    toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".lu.".$hsdname.".".$lu."-".$ldev.".tier1 ".$tier1." ".$now);
-        	                toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".lu.".$hsdname.".".$lu."-".$ldev.".tier2 ".$tier2." ".$now);
-            	            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".lu.".$hsdname.".".$lu."-".$ldev.".tier3 ".$tier3." ".$now);
-						}
+                        if($usetag) {
+                            toGraphite("hv_capacity_lu_total;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";lu=".$lu.";hsd=".$hsdname." ".$capacity." ".$now);
+                            toGraphite("hv_capacity_lu_used;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";lu=".$lu.";hsd=".$hsdname." ".$used." ".$now);
+                            toGraphite("hv_capacity_lu_tier1;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";lu=".$lu.";hsd=".$hsdname." ".$tier1." ".$now);
+                            toGraphite("hv_capacity_lu_tier2;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";lu=".$lu.";hsd=".$hsdname." ".$tier2." ".$now);
+                            toGraphite("hv_capacity_lu_tier3;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";ldev=".$ldev.";lu=".$lu.";hsd=".$hsdname." ".$tier3." ".$now);
+                        } else {
+                            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".lu.".$hsdname.".".$lu."-".$ldev.".capacity ".$capacity." ".$now);
+                            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".lu.".$hsdname.".".$lu."-".$ldev.".used ".$used." ".$now);
+                            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".lu.".$hsdname.".".$lu."-".$ldev.".tier1 ".$tier1." ".$now);
+                            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".lu.".$hsdname.".".$lu."-".$ldev.".tier2 ".$tier2." ".$now);
+                            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".lu.".$hsdname.".".$lu."-".$ldev.".tier3 ".$tier3." ".$now);
+                            }
                     } else {
                         $log->debug("No LDEV information found for LDEV: ".$ldev." on storage ".$namereference{$serial});
                     }
@@ -1557,18 +1553,18 @@ sub logscriptstats {
         if($opensocket) {
             initsocket();
         }
-		if($usetag) {
-			my @metricparts = split(/\./,$metric);
-			if($metricparts[0] eq 'runtime') {
-				$log->trace("hv_runtime_".lc($metricparts[1]).";storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}." ".$value." ".$scripttime);
-				toGraphite("hv_runtime_".lc($metricparts[1]).";storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}." ".$value." ".$scripttime);
-			} elsif ($metricparts[0] eq 'metric') {
-				$log->trace("hv_metriccount".lc($metricparts[2]).";storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";metric=".$metricparts[3]." ".$value." ".$scripttime);
-				toGraphite("hv_metriccount".lc($metricparts[2]).";storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";metric=".$metricparts[3]." ".$value." ".$scripttime);
-			}
-		} else {
-	        toGraphite("hds.hds2graphite.stats.".$arraytype{$serial}.".".$namereference{$serial}.".".$metric." ".$value." ".$scripttime);
-		}
+        if($usetag) {
+            my @metricparts = split(/\./,$metric);
+            if($metricparts[0] eq 'runtime') {
+                $log->trace("hv_runtime_".lc($metricparts[1]).";storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}." ".$value." ".$scripttime);
+                toGraphite("hv_runtime_".lc($metricparts[1]).";storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}." ".$value." ".$scripttime);
+            } elsif ($metricparts[0] eq 'metric') {
+                $log->trace("hv_metriccount".lc($metricparts[2]).";storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";metric=".$metricparts[3]." ".$value." ".$scripttime);
+                toGraphite("hv_metriccount".lc($metricparts[2]).";storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";metric=".$metricparts[3]." ".$value." ".$scripttime);
+            }
+        } else {
+            toGraphite("hds.hds2graphite.stats.".$arraytype{$serial}.".".$namereference{$serial}.".".$metric." ".$value." ".$scripttime);
+        }
         $log->debug("Logging stats: ".$metric." for current run!");
         if($opensocket) {
             closesocket();
@@ -1732,6 +1728,7 @@ sub initservice {
             ) or $log->logdie("Unable to open socket for systemd communication");
             print $sock "READY=1\n";
             $log->info("Service is initialized...");
+            close($sock)
         }
     } else {
         $log->trace("Looks like we are not runnings as systemd-service!");
