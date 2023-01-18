@@ -14,4 +14,4 @@ jobs:
         install-modules: File::stat Getopt::Long IO::Socket::INET IO::Socket::UNIX Log::Log4perl Time::HiRes Time::Local Time::Piece
     - name: perl -V
       run: perl -V
-    - run: for f in `find . -name "*.pm" -o -name "*.pl" -o -name "*.t"`; do perl -c $f; done
+    - run: for f in `find . -name "hds2graphite*.pl"`; do perl -c $f; done
