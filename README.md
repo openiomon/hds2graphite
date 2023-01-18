@@ -26,7 +26,6 @@ Install on RHEL via RPM package: `yum install hds2graphite-0.x-x.rpm`
 
 Perl dependencies that are not available in RHEL / CentOS repositories:
 * Log::Log4perl (RPM perl-Log-Log4perl available in [EPEL repository](https://fedoraproject.org/wiki/EPEL))
-* Systemd::Daemon (included in the release package, [view in CPAN](https://metacpan.org/pod/Systemd::Daemon))
 
 For other Linux distributions you can just clone the repository. Default installation folder is `/opt/hds2graphite`. The service operates with a user called "openiomon"
 
@@ -108,7 +107,8 @@ When using HTNM / HIAA: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem
 * removed metrics collection for counters marked "reserved" in the Ops Center Analyzer REST API documentation
 * fixed realtime port_avg_response_rate not showing values
 * realtime service will retry longer before failing
-* log worker die message, thanks to @NimVek for the suggestion
+* log worker die message, thanks to user [NimVek](https://github.com/NimVek) for the suggestion
+* removed dependency to Perl module Systemd::Daemon
 
 ### 0.3.4
 * First public release
