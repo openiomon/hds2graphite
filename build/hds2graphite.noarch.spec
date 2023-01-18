@@ -9,7 +9,7 @@ BuildArch:  noarch
 AutoReqProv: no
 URL:        https://github.com/openiomon/%{name}
 Source0:    https://github.com/openiomon/%{name}/%{name}-%{version}.tar.gz
-Requires:   perl(Readonly) perl(JSON) perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(IO::Socket::UNIX) perl(Log::Log4perl) perl(POSIX) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
+Requires:   perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(IO::Socket::UNIX) perl(JSON) perl(Log::Log4perl) perl(LWP::UserAgent) perl(POSIX) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
 
 
 %description
@@ -40,17 +40,17 @@ mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/run/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/vsp/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g1000/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g1500/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g350/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g370/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g400/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g600/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g700/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g800/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g900/
-mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g700/
-mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g370/
-mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g350/
-mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5500/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5100/
-mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5600/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5200/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5500/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5600/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/cci/
 mkdir -p ${RPM_BUILD_ROOT}/etc/logrotate.d/
 install -m 755 %{_builddir}/hds2graphite-%{version}/bin/* ${RPM_BUILD_ROOT}/opt/hds2graphite/bin/
