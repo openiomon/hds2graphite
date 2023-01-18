@@ -23,7 +23,7 @@ jobs:
       id: rpm
       uses: naveenrajm7/rpmbuild@master
       with:
-        spec_file: "build/hds2graphite.el7.spec"
+        spec_file: "build/hds2graphite.noarch.spec"
     
     - name: Print output
       run: echo ${{steps.rpm.outputs.source_rpm_path}}
