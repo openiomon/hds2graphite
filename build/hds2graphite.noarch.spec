@@ -4,14 +4,14 @@ Summary:    hds2graphite is a module of openiomon which is used to transfer stat
 Name:       hds2graphite
 Version:    0.4
 prefix:     /opt
-Release:    0.el7
+Release:    0
 License:    GPL
 Group:      Applications/Internet
 BuildArch:  x86_64
 AutoReqProv: no
 URL:        https://github.com/openiomon/%{name}
 Source0:    https://github.com/openiomon/%{name}/%{name}-%{version}.tar.gz
-Requires:   perl(Readonly) perl(JSON) perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(Log::Log4perl) perl(POSIX) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
+Requires:   perl(Readonly) perl(JSON) perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(IO::Socket::Unix) perl(Log::Log4perl) perl(POSIX) perl(Time::HiRes) perl(Time::Local) perl(Time::Piece) perl(constant) perl(strict) perl(warnings) perl(version)
 
 
 %description
@@ -40,7 +40,6 @@ mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/log/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/out/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/run/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/vsp/
-mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/lib/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g1000/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g1500/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/g400/
@@ -62,7 +61,7 @@ install -m 644 %{_builddir}/hds2graphite-%{version}/conf/*.example ${RPM_BUILD_R
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/metrics/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/metrics
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/templates/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/templates
 install -m 644 %{_builddir}/hds2graphite-%{version}/build/hds2graphite_logrotate ${RPM_BUILD_ROOT}/etc/logrotate.d/hds2graphite
-cp -a %{_builddir}/hds2graphite-%{version}/lib/el7/* ${RPM_BUILD_ROOT}/opt/hds2graphite/lib/
+
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -77,15 +76,15 @@ rm -rf ${RPM_BUILD_ROOT}
 %attr(755,openiomon,openiomon) /opt/hds2graphite
 %attr(755,openiomon,openiomon) /opt/hds2graphite/*
 %attr(755,openiomon,openiomon) /opt/hds2graphite/bin/*
-%attr(755,openiomon,openiomon) /opt/hds2graphite/lib/perl5/
+
 
 
 %post
 ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
 
 %changelog
-* Fri Jan 13 2023 Timo Drach <timo.drach@openiomon.org>
-- Added support for EL 7+8
+* Wed Jan 18 2023 Timo Drach <timo.drach@openiomon.org>
+- Removed Systemd Perl Libs
 - Added support and dashboards for VictoriaMetrics
 * Tue Mar 02 2021 Timo Drach <timo.drach@openiomon.org>
 - Added support for VSP 5000 series
