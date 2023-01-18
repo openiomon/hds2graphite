@@ -242,7 +242,7 @@ sub readconfig {
                             $conf_storagename =~ s/\s//g;
                             $conf_storagename = uc($conf_storagename);
                             $arrays{$conf_storagename}{"serial"}=$arrayserial;
-                            $arrays{$conf_storagename}{"type"}=$araytype;
+                            $arrays{$conf_storagename}{"type"}=$arraytype;
                         } elsif ($configline =~ "realtime_appliction") {
                             $arrays{$conf_storagename}{"realtime_application"}=$values[1];
                         } elsif ($configline =~ "realtime_api_host") {
