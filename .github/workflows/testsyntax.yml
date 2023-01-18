@@ -1,0 +1,11 @@
+name: check-syntax
+
+on: workflow_dispatch
+
+jobs:
+  perl:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Check syntax 
+      run: for f in `find . -name "*.pm" -o -name "*.pl" -o -name "*.t"`; do perl -c $f; done
