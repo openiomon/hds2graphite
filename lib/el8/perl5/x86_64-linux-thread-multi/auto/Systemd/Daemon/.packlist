@@ -1,8 +1,0 @@
-/usr/local/lib64/perl5/Systemd/Daemon.pm
-/usr/local/lib64/perl5/Systemd/Daemon/Stub.pm
-/usr/local/lib64/perl5/Systemd/Daemon/XS.pm
-/usr/local/lib64/perl5/Systemd/Daemon/XS/Inline.pm
-/usr/local/lib64/perl5/auto/Systemd/Daemon/XS/Inline/Inline.so
-/usr/local/share/man/man3/Systemd::Daemon.3pm
-/usr/local/share/man/man3/Systemd::Daemon::Stub.3pm
-/usr/local/share/man/man3/Systemd::Daemon::XS.3pm
