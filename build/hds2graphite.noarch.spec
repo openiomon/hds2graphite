@@ -34,6 +34,8 @@ mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/arch/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/bin/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/metrics
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/templates
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/dashboards/graphite
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/dashboards/prometheus
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/log/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/out/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/run/
@@ -59,7 +61,8 @@ install -m 644 %{_builddir}/hds2graphite-%{version}/conf/*.example ${RPM_BUILD_R
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/metrics/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/metrics
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/templates/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/templates
 install -m 644 %{_builddir}/hds2graphite-%{version}/build/hds2graphite_logrotate ${RPM_BUILD_ROOT}/etc/logrotate.d/hds2graphite
-
+cp -a %{_builddir}/hds2graphite-%{version}/dashboards/graphite/*.json ${RPM_BUILD_ROOT}/opt/hds2graphite/dashboards/graphite
+cp -a %{_builddir}/hds2graphite-%{version}/dashboards/prometheus/*.json ${RPM_BUILD_ROOT}/opt/hds2graphite/dashboards/prometheus
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -75,45 +78,22 @@ rm -rf ${RPM_BUILD_ROOT}
 %attr(755,openiomon,openiomon) /opt/hds2graphite/*
 %attr(755,openiomon,openiomon) /opt/hds2graphite/bin/*
 
-
-
 %post
 ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
 
 %changelog
 * Wed Jan 18 2023 Timo Drach <timo.drach@openiomon.org>
 - Removed Systemd Perl Libs
-- Added support and dashboards for VictoriaMetrics
-* Tue Mar 02 2021 Timo Drach <timo.drach@openiomon.org>
-- Added support for VSP 5000 series
-* Tue Oct 01 2019 Timo Drach <timo.drach@openiomon.org>
-- Added example go-carbon storageschema configfile
-* Wed Sep 25 2019 Timo Drach <timo.drach@openiomon.org>
-- Added cci folder to installation directory to allow deployment of CCI with hds2graphite --preparecci
+- added dependency to Perl IO::Socket::UNIX
+- changed arch to noarch
 * Mon Sep 23 2019 Timo Drach <timo.drach@openiomon.org>
 - Cleanup or perl libraries and dependencies
 * Thu Sep 19 2019 Timo Drach <timo.drach@openiomon.org>
-- Preparation for release on github
 - Added PERL5 systemd libraries
-- Changes in logfilehandling for hds2graphite-realtime
-* Mon Dec 03 2018 Timo Drach <timo.drach@cse-ub.de>
-- Added support for Panama 2 Systeme
-- Added support for Cache Partitions
-- Added support for multi-vsm-GAD implementations
-* Tue Aug 21 2018 Timo Drach <timo.drach@cse-ub.de>
-- fixed minor issues
 * Sun Aug 19 2018 Timo Drach <timo.drach@cse-ub.de>
-- Changed config file struture
-- added support for VSMs and GAD
-- enhanded realtime gathering for HDS2GRAPHITE
 - Changed package dependencies
-* Mon May 21 2018 Timo Drach <timo.drach@cse-ub.de>
-- Added realtime monitor for HDS2GRAPHITE
 * Tue Mar 06 2018 Timo Drach <timo.drach@cse-ub.de>
 - Changed some file permission to use user openiomon:openiomon
-- rewritten creating of horcm.conf files
-* Tue Jan 09 2018 Timo Drach <timo.drach@cse-ub.de>
-- Added support for dropping service messages from syslog
 * Tue Jan 02 2018 Timo Drach <timo.drach@cse-ub.de>
 - Added creation of service user openiomon and changed file ownership
 - Added logrotate file to build process
