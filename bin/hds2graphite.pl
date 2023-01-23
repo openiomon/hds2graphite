@@ -58,8 +58,8 @@ my $servicegroup = 'openiomon';
 my $watchdog = 300;
 my $libdir = "/opt/hds2graphite/lib/";
 my $workdir = "/opt/hds2graphite/";
-my $stdoutopt = 'null';
-my $stderropt = 'null';
+my $stdoutopt = 'journal';
+my $stderropt = 'journal';
 
 # hash for storage systems in configfile
 
