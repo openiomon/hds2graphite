@@ -1,8 +1,8 @@
 Summary:    hds2graphite is a module of openiomon which is used to transfer statistics from the Hitachi block storage systems (G1x00, Gx00, VSP) to a graphite system to be able to display this statistics in Grafana.
 Name:       hds2graphite
-Version:    0.4
+Version:    0.4.1
 prefix:     /opt
-Release:    0
+Release:    1
 License:    GPL
 Group:      Applications/Internet
 BuildArch:  noarch
@@ -13,7 +13,7 @@ Requires:   perl(File::stat) perl(Getopt::Long) perl(IO::Socket::INET) perl(IO::
 
 
 %description
-Module for integration of Hitachi block storage (G1x00, Gx00, VSP) to Grafana. Data is pulled using Export Tool or HiAA or HTnM from Hitachi Vantara and send via plain text protocol to graphite / carbon cache systems.
+Module for integration of Hitachi block storage (5x00, G1x00, Gx00, VSP) to Grafana. Data is pulled using Export Tool or HiAA or HTnM from Hitachi Vantara and send via plain text protocol to graphite / carbon cache systems.
 
 %pre
 getent group openiomon >/dev/null || groupadd -r openiomon
@@ -82,6 +82,8 @@ rm -rf ${RPM_BUILD_ROOT}
 ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
 
 %changelog
+* Wed Jan 23 2023 Timo Drach <timo.drach@openiomon.org>
+- corrected package versioning scheme
 * Wed Jan 18 2023 Timo Drach <timo.drach@openiomon.org>
 - Removed Systemd Perl Libs
 - added dependency to Perl IO::Socket::UNIX

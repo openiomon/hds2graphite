@@ -22,7 +22,7 @@ A tool to retrieve Hitachi Block Storage performance counters via Hitachi Export
 * runs in non-root environment as service user
 
 ## Installation
-Install on RHEL via RPM package: `yum install hds2graphite-0.x-x.rpm`
+Install on RHEL via RPM package: `yum install hds2graphite-0.x.x-x.rpm`
 
 Perl dependencies that are not available in RHEL / CentOS repositories:
 * Log::Log4perl (RPM perl-Log-Log4perl available in [EPEL repository](https://fedoraproject.org/wiki/EPEL))
@@ -98,6 +98,11 @@ When using Export Tool: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem
 When using HTNM / HIAA: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem name> -realtime`
 
 ## Changelog
+### 0.4.1
+* fix error in realtime metric configuration
+* fix bugs for datasource renaming in import script
+* change systemd service configuration to log output in journal
+
 ### 0.4.0
 * Added support for graphite-tag format to be used with VirtoriaMetrics backend
 * Added PromQL dashboards (tested with VictoriaMetrics)
@@ -115,4 +120,3 @@ When using HTNM / HIAA: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem
 
 # Disclaimer
 This source and the whole package comes without warranty. It may or may not harm your computer. Please use with care. Any damage cannot be related back to the author.
-
