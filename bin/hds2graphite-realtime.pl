@@ -42,7 +42,7 @@ my $usetag = 0;
 my $ssl_verify = 1;
 
 my $socketcnt = 0;
-my $sockettimer = 0;
+my $sockettimer = [gettimeofday];
 my $maxmetricsperminute = 500000;
 my $socketdelay = 10000;
 my $delaymetric = 100;
