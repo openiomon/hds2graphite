@@ -101,6 +101,7 @@ When using HTNM / HIAA: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem
 ### 0.4.1
 * fix error in realtime metric configuration
 * fix bugs for datasource renaming in import script
+* fix initialization of sockettimer in RHEL8
 * change systemd service configuration to log output in journal
 
 ### 0.4.0
