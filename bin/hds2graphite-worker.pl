@@ -92,7 +92,7 @@ my %systemips; # Hash containing all storage system IP addresses. SVP IP for VSP
 my $starttime = time;
 
 my $socketcnt = 0;
-my $sockettimer;
+my $sockettimer = [gettimeofday];
 my $maxmetricsperminute = 500000;
 my $socketdelay = 10000;
 my $delaymetric = 100;
