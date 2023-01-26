@@ -293,49 +293,24 @@ sub setdefaults {
     }
 }
 
-# Sub will check if system is Panama (Gx00 / Fx00)
+# Sub will check if system is Midrange (Gxx0 / Fxx0)
 
-sub isPanama {
+sub isMidrange {
     my $type = $_[0];
     $type = uc($type);
-#   print("In isPanama-Check: ".$type."\n");
     given ($type) {
         when ("G200") {return true}
+        when ("G350") {return true}
+        when ("G370") {return true}
         when ("G400") {return true}
         when ("G600") {return true}
+        when ("G700") {return true}
         when ("G800") {return true}
+        when ("G900") {return true}
         defaults {return false}
     }
 }
 
-# Sub will check if system is Panama2 (G130 G/F350 G/F370 G/F700 G/F900)
-
-sub isPanama2 {
-    my $type = $_[0];
-    $type = uc($type);
-#   print("In isPanama2-Check: ".$type."\n");
-    given ($type) {
-        when ("G350") {return true}
-        when ("G370") {return true}
-        when ("G700") {return true}
-        when ("G900") {return true}
-        default {return false}
-    }
-}
-
-# sub will check if system is VSP 5100 or VSP 5500
-
-sub is5000series {
-    my $type = $_[0];
-    $type = uc($type);
-    given($type) {
-        when ("5100") {return true}
-        when ("5200") {return true}
-        when ("5500") {return true}
-        when ("5600") {return true}
-        default {return false}
-    }
-}
 
 # Sub will read the configfile
 
@@ -567,11 +542,11 @@ sub readconfig {
                             $grap_port =~ s/\s//g;
                             $graphiteconf{$arrayserial}{"graphite_port"} = $grap_port;
                         } elsif ($configline =~ "metric_format") {
-			    my @values = split ("=",$configline);
-			    my $metricformat = $values[1];
- 			    $metricformat  =~ s/\s//g;
-			    $graphiteconf{$arrayserial}{"metric_format"} = $metricformat;
-			} elsif ($configline =~ "max_metrics_per_minute") {
+                            my @values = split ("=",$configline);
+                            my $metricformat = $values[1];
+                            $metricformat  =~ s/\s//g;
+                            $graphiteconf{$arrayserial}{"metric_format"} = $metricformat;
+                        } elsif ($configline =~ "max_metrics_per_minute") {
                             my @values = split ("=",$configline);
                             my $max_metrics_per_minute = $values[1];
                             $max_metrics_per_minute =~ s/\s//g;
@@ -773,7 +748,7 @@ sub importmetric {
                                 my $luindex = (scalar @itemparts)-1;
                                 # Extracting HSD name and LUN number from String from Export Tool LU data.
                                 $lu = sprintf '%03s', $itemparts[$luindex];
-								$plainlu = sprintf '%03s', $itemparts[$luindex];
+                                $plainlu = sprintf '%03s', $itemparts[$luindex];
                                 my $luold = $lu;
                                 my $hsdstring = "";
                                 for (my $i=1;$i<$luindex;$i++) {
@@ -816,7 +791,7 @@ sub importmetric {
                                     $metricstatcnt+=1;
                                     if($usetag) {
                                         toGraphite("hv_".lc($table)."_".lc($metric).";entity=physical;storagetype=".$type.";storagename=".$namereference{$serial}.";port=".$port.";hsd=".$hsd.";lu=".$plainlu.";ldev=".$ldev." ".$value." ".$epochtime);
-                                    } else {	
+                                    } else {
                                         toGraphite("hds.perf.physical.".$type.".".$namereference{$serial}.".".$table.".".$port.".".$hsd.".".$lu.".".$metric." ".$value." ".$epochtime);
                                     }
                                     if (defined($ldevmapping{$ldev}{"rsgid"})) {
@@ -862,7 +837,7 @@ sub importmetric {
                                             if($usetag) {
                                                 toGraphite("hv_".lc($table)."_".lc($metric).";entity=virtual;storagetype=".$vsms{$namereference{$serial}}{$rsgid}{"type"}.";storagename=".$vsms{$namereference{$serial}}{$rsgid}{"name"}.";type=".$ldevtype.";p_id=".$entity.";ldev=".$ldev.";physicalstoragename=".$namereference{$serial}." ".$value." ".$epochtime);
                                             } else {
-                                                toGraphite("hds.perf.virtual.".$vsms{$namereference{$serial}}{$rsgid}{"type"}.".".$vsms{$namereference{$serial}}{$rsgid}{"name"}.".".$table.".".$ldevtype.".".$entity.".".$ldev.".".$namereference{$serial}.".".$metric." ".$value." ".$epochtime);	
+                                                toGraphite("hds.perf.virtual.".$vsms{$namereference{$serial}}{$rsgid}{"type"}.".".$vsms{$namereference{$serial}}{$rsgid}{"name"}.".".$table.".".$ldevtype.".".$entity.".".$ldev.".".$namereference{$serial}.".".$metric." ".$value." ".$epochtime);
                                             }
                                         }
                                     }
@@ -911,7 +886,7 @@ sub createexporttoolconf {
     open my $cmdtemplatefp, '<', $cmdtemplate or $log->logdie("Can't open file: $!");
     open my $cmdfilefp, '>', $cmdfile or $log->logdie("Can't open file: $!");
     # For Gx00/Fx00 Systems the IPs of both controllers need to be specified...
-    if(isPanama($arraytype{$serial}) || isPanama2($arraytype{$serial})) {
+    if(isMidrange($arraytype{$serial})) {
         print $cmdfilefp "ip ".$systemips{$serial}{"SVP"}."\n";
         print $cmdfilefp "dkcsn ".$serial."\n";
     } else {
@@ -923,7 +898,7 @@ sub createexporttoolconf {
         my $line = $_;
         if($line =~ "option nocompress clear") {
             # For Gx00/Fx00 Systems there is no differentiation between short and long range data. Only range can be specified
-            if(isPanama($arraytype{$serial}) || isPanama2($arraytype{$serial})) {
+            if(isMidrange($arraytype{$serial})) {
                 print $cmdfilefp "range -".sprintf('%02s',$hourstoimport)."10:\n";
             } else {
                 print $cmdfilefp "shortrange -".sprintf('%02s',$hourstoimport)."10:\n";
@@ -958,22 +933,19 @@ sub startexporttool {
     }
 
     if(!$pid) {
+        my $javacmd;
         # All G1x00/F1x00 and Gx00/Fx00 systems are handled identical
-        if (($arraytype{$serial} eq "g1000")||($arraytype{$serial} eq "g1500")||isPanama($arraytype{$serial}) || isPanama2($arraytype{$serial}) || is5000series($arraytype{$serial})) {
-            $classpath = $exporttoolpath.$arraytype{$serial}."/lib/JSanExportLoader.jar";
-            # The variale $javacmd is only needed to to write the call in the log
-            my $javacmd = "/usr/bin/java -classpath \"".$classpath."\" -Del.tool.Xmx=536870912 -Dmd.command=".$cmdfile." -Del.logpath=".$exporttoollog."  -Dmd.rmitimeout=20 sanproject.getexptool.RJElMain";
-            $log->info("Executing: ".$javacmd);
-            $returnvalue = system("/usr/bin/java","-classpath", $classpath , "-Del.tool.Xmx=536870912", "-Dmd.command=".$cmdfile,"-Del.logpath=".$exporttoollog,"-Dmd.rmitimeout=20", "sanproject.getexptool.RJElMain");
- 
-        } elsif ($arraytype{$serial} eq "vsp") {
+        $classpath = $exporttoolpath.$arraytype{$serial}."/lib/JSanExportLoader.jar";
+        $javacmd = "/usr/bin/java -classpath \"".$classpath."\" -Del.tool.Xmx=536870912 -Dmd.command=".$cmdfile." -Del.logpath=".$exporttoollog."  -Dmd.rmitimeout=20 sanproject.getexptool.RJElMain";
+
+        if ($arraytype{$serial} eq "vsp") {
             $classpath = $exporttoolpath.$arraytype{$serial}."/lib/JSanExport.jar:".$exporttoolpath.$arraytype{$serial}."/lib/JSanRmiApiEx.jar:".$exporttoolpath.$arraytype{$serial}."/lib/JSanRmiServerUx.jar";
-            my $javacmd = "/usr/bin/java -classpath \"".$classpath."\" -Xmx536870912 -Dmd.command=".$cmdfile." -Dmd.logpath=".$exporttoollog." -Dmd.rmitimeout=20 sanproject.getmondat.RJMdMain";
-            $log->info("Executing: ".$javacmd);
-            $returnvalue = system("/usr/bin/java","-classpath", $classpath , "-Xmx536870912","-Dmd.command=".$cmdfile,"-Dmd.logpath=".$exporttoollog,"-Dmd.rmitimeout=20","sanproject.getmondat.RJMdMain");
+            $javacmd = "/usr/bin/java -classpath \"".$classpath."\" -Xmx536870912 -Dmd.command=".$cmdfile." -Dmd.logpath=".$exporttoollog." -Dmd.rmitimeout=20 sanproject.getmondat.RJMdMain";
         }
-        # Export Tool didn't run successful
-        $returnvalue = $returnvalue >> 8;
+        $log->info("Executing: ".$javacmd);
+        my @result = `$javacmd`;
+        $returnvalue = ${^CHILD_ERROR_NATIVE};
+
         exit($returnvalue);
     }
     while(true) {
@@ -1023,7 +995,7 @@ sub clearexporttoollogs {
 sub createhorcmconf {
     my $horcmconfdir = '/etc';
     if($ccipath ne "/HORCM") {
-        $horcmconfdir = $ccipath.'/etc'; 
+        $horcmconfdir = $ccipath.'/etc';
     }
     $log->info("Creating horcm".$horcminst.".conf in ".$horcmconfdir." !");
     my $horcminstfile = $horcmconfdir.'/horcm'.$horcminst.'.conf';
@@ -1032,7 +1004,7 @@ sub createhorcmconf {
     # HORCM Serviceport = 11 + Instance-Numer 3-digits with leading 0
     print $horcmfilefp "localhost       11".sprintf('%03s',$horcminst)."   3000    6000\n";
     print $horcmfilefp  "HORCM_CMD\n";
-    if(isPanama($arraytype{$serial}) || isPanama2($arraytype{$serial})) {
+    if(isMidrange($arraytype{$serial})) {
         print $horcmfilefp '\\\.\IPCMD-'.$systemips{$serial}{"IP1"}."-31001";
         print $horcmfilefp '   \\\.\IPCMD-'.$systemips{$serial}{"IP2"}."-31001";
     } else {
@@ -1095,9 +1067,8 @@ sub execccicmd {
     my @resultlines;
 
     if(!$pid) {
-        my $result = system($cmd);
-        $result = $result >> 8;
-        exit $result;
+        my @result = `$cmd`;
+        exit ${^CHILD_ERROR_NATIVE};
     }
     while(1) {
         my $res = waitpid($pid, WNOHANG);

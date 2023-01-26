@@ -194,7 +194,7 @@ sub readconfig {
                                 $usetag = 1;
                             }
                         }
-		            }
+                    }
                     when ("realtime") {
                         my @values = split("=",$configline);
                         if($configline =~ "realtime_application") {
@@ -308,7 +308,7 @@ sub setdefaults {
     if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
         $htnm_passwd = $arrays{$storagename}{"realtime_api_passwd"};
     }
-	if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
+    if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
         $ssl_verify = $arrays{$storagename}{"ssl_verfiy_host"};
     }
 }
@@ -342,33 +342,36 @@ sub getldevs {
     my %header;
     my @headerarray=();
     foreach my $line (@result) {
-    $line =~ s/\"//g;
-    chop($line);
-    if($line_cnt == 1) {
-        @headerarray = split(",",$line);
-        for (my $i=0;$i<scalar(@headerarray);$i+=1) {
-            $header{$headerarray[$i]}{"position"}=$i;
+        $line =~ s/\"//g;
+        chop($line);
+        if($line_cnt == 1) {
+            @headerarray = split(",",$line);
+            for (my $i=0;$i<scalar(@headerarray);$i+=1) {
+                $header{$headerarray[$i]}{"position"}=$i;
+            }
+        } elsif ($line_cnt == 2) {
+            my @values = split(",",$line);
+            for (my $i=0;$i<scalar(@values);$i+=1) {
+                    $header{$headerarray[$i]}{"unit"}=$values[$i];
+            }
+        } elsif (length($line)>=2) {
+            my @values = split(",",$line);
+            my $ldev_id = $values[$header{'LDEV_NUMBER'}{'position'}];
+            my $parity_grp = $values[$header{'RAID_GROUP_NUMBER'}{'position'}];
+            my $pool_id = $values[$header{'POOL_ID'}{'position'}];
+            my $mp_id = $values[$header{'MP_BLADE'}{'position'}];
+            my $vldev_id = $values[$header{'VIRTUAL_LDEV_NUMBER'}{'position'}];
+            my $v_sn = $values[$header{'VIRTUAL_SERIAL_NUMBER'}{'position'}];
+            $ldevs{$ldev_id}{'parity_grp'} = $parity_grp;
+            $ldevs{$ldev_id}{'pool_id'} = $pool_id;
+            $ldevs{$ldev_id}{'mp_id'} = $mp_id;
+            $ldevs{$ldev_id}{'vldev_id'} = $vldev_id;
+            $ldevs{$ldev_id}{'vsn'} = $v_sn;
+            if (!defined($vsms{$storagename}{$v_sn})) {
+                $ldevs{$ldev_id}{'vldev_id'} = '';
+                $ldevs{$ldev_id}{'vsn'} = '';
+            }
         }
-    } elsif ($line_cnt == 2) {
-        my @values = split(",",$line);
-        for (my $i=0;$i<scalar(@values);$i+=1) {
-                $header{$headerarray[$i]}{"unit"}=$values[$i];
-        }
-    } elsif (length($line)>=2) {
-        my @values = split(",",$line);
-        my $ldev_id = $values[$header{'LDEV_NUMBER'}{'position'}];
-        my $parity_grp = $values[$header{'RAID_GROUP_NUMBER'}{'position'}];
-        my $pool_id = $values[$header{'POOL_ID'}{'position'}];
-        my $mp_id = $values[$header{'MP_BLADE'}{'position'}];
-        my $vldev_id = $values[$header{'VIRTUAL_LDEV_NUMBER'}{'position'}];
-        my $v_sn = $values[$header{'VIRTUAL_SERIAL_NUMBER'}{'position'}];
-        $ldevs{$ldev_id}{'parity_grp'} = $parity_grp;
-        $ldevs{$ldev_id}{'pool_id'} = $pool_id;
-        $ldevs{$ldev_id}{'mp_id'} = $mp_id;
-        $ldevs{$ldev_id}{'vldev_id'} = $vldev_id;
-        $ldevs{$ldev_id}{'vsn'} = $v_sn;
-        $log->trace($ldev_id.": ".$ldevs{$ldev_id}{'parity_grp'}." => ".$ldevs{$ldev_id}{'pool_id'}." => ".$ldevs{$ldev_id}{'mp_id'}." => ".$ldevs{$ldev_id}{'vldev_id'}." => ".$ldevs{$ldev_id}{'vsn'});
-    }
     $line_cnt += 1;
     }
 }
@@ -451,15 +454,15 @@ sub reportmetric {
                     my @values = split(",",$line);
                     my @labels = @{$labels{$unit}};
                     my $labelcontent="";
-					my $taglabel;
+                    my $taglabel;
                     for(my $i=0;$i<scalar(@labels);$i+=1) {
                         my $label = $labels[$i];
                         if($i==0) {
                             if(defined $header{$label}{"position"}) {
                                 if($usetag) {
                                     $taglabel=lc($label).'='.$values[$header{$label}{"position"}];
-                                } 
-	                            $labelcontent=$values[$header{$label}{"position"}];
+                                }
+                                $labelcontent=$values[$header{$label}{"position"}];
                             } else {
                                 if($usetag) {
                                     $taglabel='label='.$label;
@@ -483,20 +486,14 @@ sub reportmetric {
                         $taglabel =~s/\"//g;
                     }
                     foreach my $metric (@{$metrics{$unit}}) {
+                        if (!defined($header{$metric}{"position"})) {
+                            $log->warn("Metric: ".$metric." found in metric configuration file but not in HTTP response for Unit: ".$unit);
+                            next;
+                        }
                         my $metric_value = $values[$header{$metric}{"position"}];
                         my $metric_unit = $header{$metric}{"unit"};
                         if (($metric_unit eq "float") || ($metric_unit eq "double")) {
-                            my @numberparts = split('E',$metric_value);
-                            my $basenumber = $numberparts[0];
-                            my $power = $numberparts[1];
-                            $power =~ s/\+//g;
-                            if($power < 0) {
-                                $metric_value=$basenumber / (10**(-1*$power));
-                            } elsif($power > 0) {
-                                $metric_value= $basenumber * (10**$power);
-                            } elsif ($power == 0) {
-                                $metric_value= $basenumber;
-                            }
+                            $metric_value = sprintf("%.2f", $metric_value);
                         }
                         my $timefromresponse = $values[$header{"DATETIME"}{"position"}];
                         my $timeoffset = $values[$header{"GMT_ADJUST"}{"position"}];
@@ -528,7 +525,7 @@ sub reportmetric {
                                     if($ldevs{$labelcontent}{'vldev_id'} ne '') {
                                         my $virt_ldev = $ldevs{$labelcontent}{'vldev_id'};
                                         my $virt_storage_sn = $ldevs{$labelcontent}{'vsn'};
-										$log->trace("Found virtual ldev: ".$virt_ldev." from serial: ".$virt_storage_sn);
+                                        $log->trace("Found virtual ldev: ".$virt_ldev." from serial: ".$virt_storage_sn);
                                         my $virt_storage_name = $vsms{$storagename}{$virt_storage_sn}{'name'};
                                         my $virt_storage_type = $vsms{$storagename}{$virt_storage_sn}{'type'};
                                         my $virtmetric = 'hds.perf.virtual.'.$virt_storage_type.'.'.$virt_storage_name.'.'.$target.'.DP.'.$pool_id.'.'.$virt_ldev.'.'.$storagename.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
@@ -566,9 +563,9 @@ sub initializereporter {
     $instance = $htnm_agents{$serial}{"instanceName"};
     $instance_hostname = $htnm_agents{$serial}{"hostName"};
     if($instance eq "" or $instance_hostname eq "") {
-	$log->error("No HTNM / HIAA / Analyzer Instance found for ".$storagename."! Please check");
-	stopservice();
-	exit(1);	
+    $log->error("No HTNM / HIAA / Analyzer Instance found for ".$storagename."! Please check");
+    stopservice();
+    exit(1);
     }
     my $metricfile = $metricpath.'/'.$storagetype.'_realtime_metrics.conf';
 
@@ -699,12 +696,12 @@ sub toGraphite() {
 # Sub to initialize Systemd Service
 
 sub initservice {
-    if(defined $ENV{'NOTIFY_SOCKET'}) {    
+    if(defined $ENV{'NOTIFY_SOCKET'}) {
         if($mainpid == $$) {
-        	my $sock = IO::Socket::UNIX->new(
-            	Type => SOCK_DGRAM(),
+            my $sock = IO::Socket::UNIX->new(
+                Type => SOCK_DGRAM(),
                 Peer => $ENV{'NOTIFY_SOCKET'},
-    	    ) or $log->logdie("Unable to open socket for systemd communication");
+            ) or $log->logdie("Unable to open socket for systemd communication");
             print $sock "READY=1\n";
             $log->info("Service is initialized...");
             close($sock)
