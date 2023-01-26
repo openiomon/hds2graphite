@@ -32,6 +32,7 @@ exit 0
 rm -rf ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/arch/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/bin/
+mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/cci/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/metrics
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/templates
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/dashboards/graphite
@@ -53,7 +54,6 @@ mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5100/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5200/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5500/
 mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/5600/
-mkdir -p ${RPM_BUILD_ROOT}/opt/hds2graphite/cci/
 mkdir -p ${RPM_BUILD_ROOT}/etc/logrotate.d/
 install -m 755 %{_builddir}/hds2graphite-%{version}/bin/* ${RPM_BUILD_ROOT}/opt/hds2graphite/bin/
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/*.conf ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/
@@ -61,14 +61,44 @@ install -m 644 %{_builddir}/hds2graphite-%{version}/conf/*.example ${RPM_BUILD_R
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/metrics/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/metrics
 install -m 644 %{_builddir}/hds2graphite-%{version}/conf/templates/* ${RPM_BUILD_ROOT}/opt/hds2graphite/conf/templates
 install -m 644 %{_builddir}/hds2graphite-%{version}/build/hds2graphite_logrotate ${RPM_BUILD_ROOT}/etc/logrotate.d/hds2graphite
-cp -a %{_builddir}/hds2graphite-%{version}/dashboards/graphite/*.json ${RPM_BUILD_ROOT}/opt/hds2graphite/dashboards/graphite
-cp -a %{_builddir}/hds2graphite-%{version}/dashboards/prometheus/*.json ${RPM_BUILD_ROOT}/opt/hds2graphite/dashboards/prometheus
+install -m 644 %{_builddir}/hds2graphite-%{version}/dashboards/graphite/*.json ${RPM_BUILD_ROOT}/opt/hds2graphite/dashboards/graphite
+install -m 644 %{_builddir}/hds2graphite-%{version}/dashboards/prometheus/*.json ${RPM_BUILD_ROOT}/opt/hds2graphite/dashboards/prometheus
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %defattr(644,openiomon,openiomon,755)
+/opt/hds2graphite/arch/
+/opt/hds2graphite/bin/
+%attr(755,openiomon,openiomon) /opt/hds2graphite/bin/*.sh
+%attr(755,openiomon,openiomon) /opt/hds2graphite/bin/*.pl
+/opt/hds2graphite/cci/
+/opt/hds2graphite/conf/
+/opt/hds2graphite/conf/metrics
+/opt/hds2graphite/conf/templates
+/opt/hds2graphite/conf/storage-schemas.conf.example
+/opt/hds2graphite/dashboards/graphite
+/opt/hds2graphite/dashboards/graphite/*.json
+/opt/hds2graphite/dashboards/prometheus
+/opt/hds2graphite/dashboards/prometheus/*.json
+/opt/hds2graphite/log/
+/opt/hds2graphite/out/
+/opt/hds2graphite/run/
+/opt/hds2graphite/vsp/
+/opt/hds2graphite/g1000/
+/opt/hds2graphite/g1500/
+/opt/hds2graphite/g350/
+/opt/hds2graphite/g370/
+/opt/hds2graphite/g400/
+/opt/hds2graphite/g600/
+/opt/hds2graphite/g700/
+/opt/hds2graphite/g800/
+/opt/hds2graphite/g900/
+/opt/hds2graphite/5100/
+/opt/hds2graphite/5200/
+/opt/hds2graphite/5500/
+/opt/hds2graphite/5600/
 %config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/*.conf
 %config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/metrics/*.conf
 %config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/templates/*.txt
@@ -78,9 +108,9 @@ rm -rf ${RPM_BUILD_ROOT}
 ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
 
 %changelog
-* Wed Jan 26 2023 Timo Drach <timo.drach@openiomon.org>
+* Thu Jan 26 2023 Timo Drach <timo.drach@openiomon.org>
 - do not set executable permission for all files
-* Wed Jan 23 2023 Timo Drach <timo.drach@openiomon.org>
+* Mon Jan 23 2023 Timo Drach <timo.drach@openiomon.org>
 - corrected package versioning scheme
 * Wed Jan 18 2023 Timo Drach <timo.drach@openiomon.org>
 - Removed Systemd Perl Libs
