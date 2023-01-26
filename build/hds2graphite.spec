@@ -104,6 +104,9 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/templates/*.txt
 %config(noreplace) %attr(644,root,root) /etc/logrotate.d/hds2graphite
 
+%attr(755,openiomon,openiomon) /opt/hds2graphite
+%attr(755,openiomon,openiomon) /opt/hds2graphite/bin/*
+
 %post
 ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
 
