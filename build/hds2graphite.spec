@@ -74,13 +74,16 @@ rm -rf ${RPM_BUILD_ROOT}
 %config(noreplace) %attr(644,openiomon,openiomon) /opt/hds2graphite/conf/templates/*.txt
 %config(noreplace) %attr(644,root,root) /etc/logrotate.d/hds2graphite
 
+%attr(755,openiomon,openiomon) /opt/hds2graphite
+%attr(755,openiomon,openiomon) /opt/hds2graphite/bin/*
+
 %post
 ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
 
 %changelog
-* Wed Jan 26 2023 Timo Drach <timo.drach@openiomon.org>
+* Thu Jan 26 2023 Timo Drach <timo.drach@openiomon.org>
 - do not set executable permission for all files
-* Wed Jan 23 2023 Timo Drach <timo.drach@openiomon.org>
+* Mon Jan 23 2023 Timo Drach <timo.drach@openiomon.org>
 - corrected package versioning scheme
 * Wed Jan 18 2023 Timo Drach <timo.drach@openiomon.org>
 - Removed Systemd Perl Libs
