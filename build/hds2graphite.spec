@@ -78,6 +78,7 @@ rm -rf ${RPM_BUILD_ROOT}
 /opt/hds2graphite/conf/metrics
 /opt/hds2graphite/conf/templates
 /opt/hds2graphite/conf/storage-schemas.conf.example
+/opt/hds2graphite/dashboards/
 /opt/hds2graphite/dashboards/graphite
 /opt/hds2graphite/dashboards/graphite/*.json
 /opt/hds2graphite/dashboards/prometheus
