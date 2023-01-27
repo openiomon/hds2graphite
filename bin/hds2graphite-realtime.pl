@@ -492,6 +492,10 @@ sub reportmetric {
                         }
                         my $metric_value = $values[$header{$metric}{"position"}];
                         my $metric_unit = $header{$metric}{"unit"};
+                        # skip empty values
+                        if (!length($metric_value)) {
+                            next;
+                        }
                         if (($metric_unit eq "float") || ($metric_unit eq "double")) {
                             $metric_value = sprintf("%.2f", $metric_value);
                         }
@@ -506,17 +510,16 @@ sub reportmetric {
                         my $importmetric='REALTIME_'.$metric;
                         my $graphitemetric = "";
                         if($unit eq 'RAID_PI_LDS') {
-                            my $parity_grp = $ldevs{$labelcontent}{'parity_grp'};
-                            my $pool_id = $ldevs{$labelcontent}{'pool_id'};
                             my $mp_id = $ldevs{$labelcontent}{'mp_id'};
-                            if ($parity_grp ne '') {
+                            if ($ldevs{$labelcontent}{'parity_grp'} ne '') {
+                                my $parity_grp = $ldevs{$labelcontent}{'parity_grp'};
                                 $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.PG.'.$parity_grp.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
                                 if($usetag) {
                                     $graphitemetric = 'hv_'.lc($target).'_'.lc($importmetric).';entity=physical;storagetype='.$storagetype.';storagename='.$storagename.';type=pg;pg_id='.$parity_grp.';'.$taglabel.' '.$metric_value.' '.$graphitetime;
                                 }
                             } else {
-                                if($pool_id ne '') {
-                                    $pool_id = sprintf("%03d",$pool_id);
+                                if ($ldevs{$labelcontent}{'pool_id'} ne '') {
+                                    my $pool_id = sprintf("%03d",$ldevs{$labelcontent}{'pool_id'});
                                     $graphitemetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.'.$target.'.DP.'.$pool_id.'.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
                                     my $mpmetric = 'hds.perf.physical.'.$storagetype.'.'.$storagename.'.PRCS.'.$mp_id.'.LDEV.'.$labelcontent.'.'.$importmetric.' '.$metric_value.' '.$graphitetime;
                                     if($usetag) {
