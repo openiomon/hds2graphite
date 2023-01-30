@@ -98,6 +98,10 @@ When using Export Tool: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem
 When using HTNM / HIAA: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem name> -realtime`
 
 ## Changelog
+### 0.4.3
+* fix error for empty metric values, will be skipped now
+* fix error for missing parity_grp and vldev values
+
 ### 0.4.2
 * fix error for floating point number formatting
 * fix error if GAD LDEVs are found but no VSM is configured
