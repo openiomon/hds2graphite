@@ -784,7 +784,7 @@ my $log4perlConf  = qq(
     log4perl.appender.FileAppndr1.filename = $logfile
     log4perl.appender.FileAppndr1.owner    = openiomon
     log4perl.appender.FileAppndr1.group    = openiomon
-    log4perl.appender.FileAppndr1.umask    = 0000
+    log4perl.appender.FileAppndr1.umask    = 0022
     log4perl.appender.FileAppndr1.layout   = Log::Log4perl::Layout::PatternLayout
     log4perl.appender.FileAppndr1.layout.ConversionPattern = %d [%p] (%F:%L) %M > %m %n
 );
