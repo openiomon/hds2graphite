@@ -18,7 +18,6 @@
 use v5.10;
 use strict;
 use warnings;
-#no warnings qw( experimental::smartmatch );
 use feature qw(switch);
 no if $] >= 5.018, warnings => qw( experimental::smartmatch );
 use constant false => 0;
@@ -600,29 +599,25 @@ sub readmetric {
             my $perffile = $exportpath.$values[0];
             # Lines containing a * (asterisk) defined that all CSV files that match this pattern need to be imported
             if($perffile =~ '\*') {
-                my $lscmd = "ls -l ".$perffile;
-                my @results = `$lscmd`;
+                my @results = glob($perffile);;
                 foreach my $result (@results) {
-                    my @lsline = split(" ",$result);
-                    $config{$lsline[8]}{"table"} = $table;
-                    $config{$lsline[8]}{"metric"} = $metric;
-                    $config{$lsline[8]}{"itemselect"} = "auto";
+                    $config{$result}{"table"} = $table;
+                    $config{$result}{"metric"} = $metric;
+                    $config{$result}{"itemselect"} = "auto";
                 }
-                # Line containing % (percent sign) indicate that a part of the filename will be used to specify the ITEM (MP Board, etc.) for which the data is conained in this CSV file.
-                # There is for example one CSV file per MP instand of one file containing all MP data.
+            # Line containing % (percent sign) indicate that a part of the filename will be used to specify the ITEM (MP Board, etc.) for which the data is conained in this CSV file.
+            # There is for example one CSV file per MP instand of one file containing all MP data.
             } elsif ($perffile =~ "%") {
                 my $plainfile = $perffile;
                 my $from = index($perffile,"%");
                 my $to = rindex($perffile,"%");
-                $plainfile =~ s/%/\*/g;
-                my $lscmd = "ls -l ".$plainfile;
-                my @results = `$lscmd`;
+                $plainfile =~ s/%/\?/g;
+                my @results = glob($plainfile);
                 foreach my $result (@results) {
-                    my @lsline = split(" ",$result);
-                    my $item = substr($lsline[8], $from, $to-$from+1);
-                    $config{$lsline[8]}{"table"} = $table;
-                    $config{$lsline[8]}{"metric"} = $metric;
-                    $config{$lsline[8]}{"itemselect"} = $item;
+                    my $item = substr($result, $from, $to-$from+1);
+                    $config{$result}{"table"} = $table;
+                    $config{$result}{"metric"} = $metric;
+                    $config{$result}{"itemselect"} = $item;
                 }
             } else {
                 # Regular metrics
