@@ -608,7 +608,7 @@ sub readmetric {
                     $config{$lsline[8]}{"metric"} = $metric;
                     $config{$lsline[8]}{"itemselect"} = "auto";
                 }
-                # Line containing § (paragraph) indicate that a part of the filename will be used to specify the ITEM (MP Board, etc.) for which the data is conained in this CSV file.
+                # Line containing % (percent sign) indicate that a part of the filename will be used to specify the ITEM (MP Board, etc.) for which the data is conained in this CSV file.
                 # There is for example one CSV file per MP instand of one file containing all MP data.
             } elsif ($perffile =~ "%") {
                 my $plainfile = $perffile;
@@ -945,7 +945,7 @@ sub startexporttool {
         $log->info("Executing: ".$javacmd);
         my @result = `$javacmd`;
         $returnvalue = ${^CHILD_ERROR_NATIVE};
-
+        $returnvalue = $returnvalue>>8;
         exit($returnvalue);
     }
     while(true) {
