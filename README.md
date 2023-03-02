@@ -9,7 +9,7 @@
 # hds2graphite
 
 A tool to retrieve Hitachi Block Storage performance counters via Hitachi Export Tool (historical) or Hitachi Tuning Manager (HTNM) / Infrastructure Analytics Advisor (HIAA) / Ops Center Analyzer (realtime) and write them to a Carbon/Graphite backend.
-* Written in Perl
+* written in Perl
 * tested on RHEL / CentOS 7 & 8
 * RPM package available
 
@@ -98,6 +98,12 @@ When using Export Tool: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem
 When using HTNM / HIAA: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem name> -realtime`
 
 ## Changelog
+### 0.4.4
+* fix error evaluating return code from Export Tool (bug was introduced in 0.4.2)
+* fix G1500 metric configuration
+* change default logfile umask from 666 to 644
+* add new parameter java_home to configuration
+
 ### 0.4.3
 * fix error for empty metric values, will be skipped now
 * fix error for missing parity_grp and vldev values
