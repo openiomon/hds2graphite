@@ -53,6 +53,7 @@ my $storagename = ""; # name of the storage system currently being imported => p
 my $noexporttool = false; # switch to activate or deactivate the Export Tool => set at runtime
 my $hourstoimport = 1; # number of past hours of Export Tool data which should be => passed to the script
 my $exporttoolstatus = true;
+my $javahome = '/usr/bin';
 
 my $graphitehost = ""; # IP address or name of the Graphite host => provided by config file
 my $graphiteport = ""; # Port of the Graphite host => provided by config file
@@ -375,6 +376,10 @@ sub readconfig {
                         } elsif ($configline =~ "exporttool_retry_timeout") {
                             $exporttoolretrytimeout = $values[1];
                             $exporttoolretrytimeout =~ s/\s//g;
+                        } elsif ($configline =~ "java_home") {
+                            $javahome = $values[1];
+                            $javahome =~ s/\s//g;
+                            $javahome = $1 if($javahome=~/(.*)\/$/);
                         }
                     }
                     when ("graphite") {
@@ -922,8 +927,8 @@ sub startexporttool {
     my $returnvalue = 0;
     my $pid = fork();
 
-    if(! -f "/usr/bin/java") {
-        $log->error("No java found in /usr/bin/java. Please check and install java!");
+    if(! -f $javahome."/java") {
+        $log->error("No java found in ".$javahome."/java. Please check and install java!");
         exit(1);
     }
 
@@ -931,11 +936,11 @@ sub startexporttool {
         my $javacmd;
         # All G1x00/F1x00 and Gx00/Fx00 systems are handled identical
         $classpath = $exporttoolpath.$arraytype{$serial}."/lib/JSanExportLoader.jar";
-        $javacmd = "/usr/bin/java -classpath \"".$classpath."\" -Del.tool.Xmx=536870912 -Dmd.command=".$cmdfile." -Del.logpath=".$exporttoollog."  -Dmd.rmitimeout=20 sanproject.getexptool.RJElMain";
+        $javacmd = $javahome."/java -classpath \"".$classpath."\" -Del.tool.Xmx=536870912 -Dmd.command=".$cmdfile." -Del.logpath=".$exporttoollog."  -Dmd.rmitimeout=20 sanproject.getexptool.RJElMain";
 
         if ($arraytype{$serial} eq "vsp") {
             $classpath = $exporttoolpath.$arraytype{$serial}."/lib/JSanExport.jar:".$exporttoolpath.$arraytype{$serial}."/lib/JSanRmiApiEx.jar:".$exporttoolpath.$arraytype{$serial}."/lib/JSanRmiServerUx.jar";
-            $javacmd = "/usr/bin/java -classpath \"".$classpath."\" -Xmx536870912 -Dmd.command=".$cmdfile." -Dmd.logpath=".$exporttoollog." -Dmd.rmitimeout=20 sanproject.getmondat.RJMdMain";
+            $javacmd = $javahome."/java -classpath \"".$classpath."\" -Xmx536870912 -Dmd.command=".$cmdfile." -Dmd.logpath=".$exporttoollog." -Dmd.rmitimeout=20 sanproject.getmondat.RJMdMain";
         }
         $log->info("Executing: ".$javacmd);
         my @result = `$javacmd`;
