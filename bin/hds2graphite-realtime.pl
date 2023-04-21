@@ -510,6 +510,9 @@ sub reportmetric {
                         my $importmetric='REALTIME_'.$metric;
                         my $graphitemetric = "";
                         if($unit eq 'RAID_PI_LDS') {
+                            if(!defined($ldevs{$labelcontent})) {
+                                next;
+                            }
                             my $mp_id = $ldevs{$labelcontent}{'mp_id'};
                             if ($ldevs{$labelcontent}{'parity_grp'} ne '') {
                                 my $parity_grp = $ldevs{$labelcontent}{'parity_grp'};
