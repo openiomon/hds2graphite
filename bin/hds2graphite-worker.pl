@@ -1119,7 +1119,7 @@ sub shutdownhorcm {
 
 sub raidcomlogin {
     $log->info("Logging in with raidcom on instance #".$horcminst." with user ".$cciuser);
-    my $returnvalue = execccicmd($ccipath."/usr/bin/raidcom -login ".$cciuser." ".$ccipasswd." -I".$horcminst);
+    my $returnvalue = execccicmd('(echo "'.$cciuser.'" && echo \''.$ccipasswd.'\') | '.$ccipath."/usr/bin/raidcom -login -I".$horcminst);
     if($returnvalue != 0) {
         $log->fatal("Failed to login to HORCM instance #",$horcminst,"! Please inspect CCI logs under /opt/HORCM/log".$horcminst);
         exit(1);
