@@ -620,14 +620,14 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(hv_cache_utilization{entity=\"physical\",storagetype=\"$Type\"},storagename)",
+        "definition": "label_values(hv_cache_utilization{entity=\"physical\",storagetype=~\"$Type\"},storagename)",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "System",
         "options": [],
         "query": {
-          "query": "label_values(hv_cache_utilization{entity=\"physical\",storagetype=\"$Type\"},storagename)",
+          "query": "label_values(hv_cache_utilization{entity=\"physical\",storagetype=~\"$Type\"},storagename)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -668,6 +668,6 @@
   "timezone": "",
   "title": "HV: Historical Cache Details",
   "uid": "s-4Gkl54z",
-  "version": 7,
+  "version": 8,
   "weekStart": ""
 }
