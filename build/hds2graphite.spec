@@ -109,11 +109,8 @@ rm -rf ${RPM_BUILD_ROOT}
 %post
 ln -s -f /opt/hds2graphite/bin/hds2graphite.pl /bin/hds2graphite
 
+# edit the changelog only for changes in the RPM package
 %changelog
-* Tue Apr 9 2024 Timo Drach <timo.drach@openiomon.org>
-- Fix needed for support of special chars in passwords of CCI
-* Fri Apr 21 2023 Timo Drach <timo.drach@openiomon.org>
-- Fixes needed to avoid issues with LDEV creating during collection
 * Thu Mar 02 2023 Timo Drach <timo.drach@openiomon.org>
 - added support for configuration of java environment
 * Thu Jan 26 2023 Timo Drach <timo.drach@openiomon.org>
