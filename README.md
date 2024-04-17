@@ -98,6 +98,12 @@ When using Export Tool: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem
 When using HTNM / HIAA: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem name> -realtime`
 
 ## Changelog
+### 0.4.6
+* add support for special characters in CCI passwords like ! or #
+
+### 0.4.5
+* fix if LDEV is created between configuration data query and performance data query
+
 ### 0.4.4
 * fix error evaluating return code from Export Tool (bug was introduced in 0.4.2)
 * fix G1500 metric configuration
