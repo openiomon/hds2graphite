@@ -62,6 +62,9 @@ my $usetag = 0;
 my $ccipath = '/opt/hds2graphite/cci/HORCM';
 my $cciuser = ""; # CCI user => provided by config file
 my $ccipasswd = ""; # CCI passwd => provided by config file
+my $cp_script = ""; # Credential Provider Script => provided by config file
+my $cp_cto = 0; # Credential Provider Script chache timeout => provided by config file
+my $cp_rto = 30; # Credential Provider Script retrieve timeout (default 30s) => provided by config file
 
 my $usevirtualldev = false; #Flag to specify whether virtual LDEV IDs should be used for storing data of GAD volumes.
 
@@ -406,6 +409,15 @@ sub readconfig {
                         } elsif ($configline =~ "cci_passwd") {
                             $ccipasswd = $values[1];
                             $ccipasswd =~ s/\s//g;
+                        } elsif ($configline =~ "credential_provider_script") {
+                            $cp_script = $values[1];
+                            $cp_script =~ s/\s//g;
+                        } elsif ($configline =~ "credential_provider_cachetimeout") {
+                            $cp_cto = $values[1];
+                            $cp_cto =~ s/\s//g;
+                        } elsif ($configline =~ "credential_provider_retrievetimeout") {
+                            $cp_rto = $values[1];
+                            $cp_rto =~ s/\s//g;
                         }
                     }
                     when ("gad") {
@@ -1770,6 +1782,40 @@ sub cleanhashes {
     %hsdreference=();
 }
 
+sub getCredential {		
+	
+	my $cpcmd = $cp_script;
+	my $user = $cciuser;
+	my $passwd = "";
+    
+	$cpcmd .= " ".$storagename." ".$user;
+	$log->debug("Query ".$user." for ".$storagename." from credential provider using script: ".$cp_script." with command: ".$cpcmd);
+	eval {
+		local $SIG{ALRM} = sub { die "timeout\n" };
+		alarm $cp_rto;
+		$passwd = `$cpcmd`;
+		alarm 0;
+	};
+	if($?) {
+		$log->error("The credential provider script returned a non zero returncode while running command: ".$cpcmd);
+		exit(1);
+	}
+	if($@) {
+		if($@ eq "timeout\n") {
+			$log->error("The credential provider script didn't respond within the timeout of ".$cp_rto);
+		} else {
+			$log->error("The credential provider script died without any good reponse code!");
+		}
+		exit(1);
+	}
+	chomp($passwd);
+	if(length($passwd)<1) {
+		$log->error("Credential provider script returned an empty password while running command: ".$cpcmd);
+		exit(1);
+	}
+	return($passwd);
+}
+
 #
 # main
 #
@@ -1810,6 +1856,11 @@ do {
     $starttime = time;
     $sockettimer = [gettimeofday];
     my $temptime = time;
+
+    if($cp_script ne "") {
+        servicestatus("Retrieving credentials from credential provider script...");
+        $ccipasswd = getCredential();
+    }
 
     if($horcminst ne "") {
         createhorcmconf();

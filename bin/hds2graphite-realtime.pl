@@ -1,4 +1,4 @@
-#!/bin/perl
+#!/usr/bin/perl
 #
 #
 #   Script for realtime data import from HTNM / HIAA to graphite
@@ -35,6 +35,10 @@ my $htnm_appl = '';
 my $htnm_user = '';
 my $htnm_passwd = '';
 my $htnm_rest_base_url = '';
+
+my $cp_script = "";
+my $cp_cto = 86400; # defaut cache timeout is set to 24 hours in seconds
+my $cp_rto = 30; # default retrieve timeout is set to 30 seconds
 
 my $graphite_host = '';
 my $graphite_port = '';
@@ -218,6 +222,15 @@ sub readconfig {
                         } elsif ($configline =~ "^ssl_verfiy_host") {
                             $ssl_verify = $values[1];
                             $ssl_verify =~s/\s//g;
+                        } elsif ($configline =~ "^credential_provider_script") {
+                            $cp_script = $values[1];
+                            $cp_script =~ s/\s//g;
+                        } elsif ($configline =~ "^credential_provider_cachetimeout") {
+                            $cp_cto = $values[1];
+                            $cp_cto =~ s/\s//g;
+                        } elsif ($configline =~ "^credential_provider_retrievetimeout") {
+                            $cp_rto = $values[1];
+                            $cp_rto =~ s/\s//g;
                         }
                     }
                     when ("performance") {
@@ -255,7 +268,13 @@ sub readconfig {
                             $arrays{$conf_storagename}{"realtime_api_user"}=$values[1];
                         } elsif ($configline =~ "realtime_api_passwd") {
                             $arrays{$conf_storagename}{"realtime_api_passwd"}=$values[1];
-                        } elsif ($configline =~ "gad_vsm") {
+                        } elsif ($configline =~ "credential_provider_script" ) {
+                            $arrays{$conf_storagename}{"credential_provider_script"}=$values[1];
+                        } elsif ($configline =~ "credential_provider_script" ) {
+                            $arrays{$conf_storagename}{"credential_provider_cachetimeout"}=$values[1];
+                        }elsif ($configline =~ "credential_provider_script" ) {
+                            $arrays{$conf_storagename}{"credential_provider_retrievetimeout"}=$values[1];
+                        }elsif ($configline =~ "gad_vsm") {
                             my @gad_vsm_strings = split(",",$values[1]);
                             my $gad_sn=$gad_vsm_strings[0];
                             my $gad_vsm_type = $gad_vsm_strings[1];
@@ -311,10 +330,23 @@ sub setdefaults {
     if(defined $arrays{$storagename}{"realtime_api_passwd"}) {
         $ssl_verify = $arrays{$storagename}{"ssl_verfiy_host"};
     }
+    if(defined $arrays{$storagename}{"credential_provider_scrip"}) {
+        $cp_script = $arrays{$storagename}{"credential_provider_scrip"};
+    }
+    if(defined $arrays{$storagename}{"credential_provider_cachetimeout"}) {
+        $cp_cto = $arrays{$storagename}{"credential_provider_cachetimeout"};
+    }
+    if(defined $arrays{$storagename}{"credential_provider_retrievetimeout"}) {
+        $cp_rto = $arrays{$storagename}{"credential_provider_retrievetimeout"};
+    }
 }
 
 sub http_get {
-    my $geturl = $_[0];
+    my $geturl = $_[0];    
+    my $retry = true;    
+    if(defined($_[1])) {
+        $retry = $_[1];
+    }
     my $req = HTTP::Request->new(GET => $geturl);
     $req->header('Content-Type' => 'application/json');
     $req->authorization_basic($htnm_user,$htnm_passwd);
@@ -323,11 +355,15 @@ sub http_get {
     $log->debug($debugcmd);
     my $resp = $ua->request($req);
     if ($resp->is_success) {
-        my $responsecontent = $resp->decoded_content;
+        my $responsecontent = $resp->decoded_content;        
         return($responsecontent);
     } else {
         $log->error("Failed to GET data from ".$geturl." with HTTP GET error code: ".$resp->code);
         $log->error("Failed to GET data from ".$geturl." with HTTP GET error message: ".$resp->message);
+        if(($resp->code == 401) && ($retry)) {
+            $log->error("Failed with authentication failure. Try getting new credentials and retry http query for ".$geturl);
+            return(http_get($geturl,false));
+        }
         $log->error("Exit hds2grahite due to failed HTTP GET Operation! Please check URL!");
         exit(($resp->code)-100);
     }
@@ -377,7 +413,10 @@ sub getldevs {
 }
 
 sub getagents {
-    my $retrieve_url = $htnm_rest_base_url.'Agents?agentType=ALL';
+    if($cp_script ne "") {
+        $htnm_passwd = getCredential();
+    }
+    my $retrieve_url = $htnm_rest_base_url.'Agents?agentType=ALL';    
     my $http_result = http_get($retrieve_url);
     if($http_result =~ "{") {
         my %json = %{decode_json($http_result)};
@@ -423,10 +462,17 @@ sub reportmetric {
     my $now = time;
     my $lastrun = 0;
     my $lastldevtime = 0;
+    my $credprovtime = 0;
 
     while(true) {
         sleep(1);
         $now = time;
+        if($cp_script ne "") {
+            if(($now - $credprovtime) >= $cp_cto) {
+                $htnm_passwd = getCredential();
+                $credprovtime = $now;
+            }
+        }
         if(($unit eq "RAID_PI_LDS") && (($now-$lastldevtime)> 3600)) {
             $lastldevtime = $now;
             getldevs();
@@ -773,6 +819,40 @@ sub alive {
     }
 }
 
+# Sub to retrieve credentials from credential provider Script when needed.
+
+sub getCredential {		
+	
+	my $cpcmd = $cp_script;
+	my $user = $htnm_user;
+	my $passwd = "";        
+	$cpcmd .= " ".$storagename." ".$user;
+	$log->debug("Query ".$user." for ".$storagename." from credential provider using script: ".$cp_script." with command: ".$cpcmd);
+	eval {
+		local $SIG{ALRM} = sub { die "timeout\n" };
+		alarm $cp_rto;
+		$passwd = `$cpcmd`;
+		alarm 0;
+	};
+	if($?) {
+		$log->error("The credential provider script returned a non zero returncode while running command: ".$cpcmd);
+		exit(1);
+	}
+	if($@) {
+		if($@ eq "timeout\n") {
+			$log->error("The credential provider script didn't respond within the timeout of ".$cp_rto);
+		} else {
+			$log->error("The credential provider script died without any good reponse code!");
+		}
+		exit(1);
+	}
+	chomp($passwd);
+	if(length($passwd)<1) {
+		$log->error("Credential provider script returned an empty password while running command: ".$cpcmd);
+		exit(1);
+	}
+	return($passwd);
+}
 
 # Main
 #
