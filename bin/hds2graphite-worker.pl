@@ -244,6 +244,32 @@ sub parseCmdArgs {
     setdefaults();
 }
 
+sub parseTimerange {
+	my %Units = ( 	map(($_,             1), qw(s second seconds sec secs)),
+					map(($_,            60), qw(m minute minutes min mins)),
+					map(($_,         60*60), qw(h hr hrs hour hours)),
+					map(($_,      60*60*24), qw(d day days)),
+					map(($_,    60*60*24*7), qw(w week weeks)),
+					map(($_,   60*60*24*30), qw(M month months mo mon mons)),
+					map(($_,  60*60*24*365), qw(y year years))
+	);
+
+	my $value = $_[0];
+	$value =~ s/^\s*\+\s*//;
+	if($value =~ /^\d*$/) {
+		return($value);
+	}
+	my ($datevalue,$dateunit) = split(/(?=[a-zA-Z])/i, $value, 2);
+	my $factor = 1;
+	if(defined $Units{$dateunit}) {
+		$factor = $Units{$dateunit};
+	} else {
+		print "Invalid unit for timerange specified: ".$dateunit."\n";
+		exit(1);
+	}
+	return($datevalue * $factor);
+}
+
 # This sub will change the defaults for config file parameters if they are defined per storage system
 
 sub setdefaults {
@@ -413,11 +439,9 @@ sub readconfig {
                             $cp_script = $values[1];
                             $cp_script =~ s/\s//g;
                         } elsif ($configline =~ "credential_provider_cachetimeout") {
-                            $cp_cto = $values[1];
-                            $cp_cto =~ s/\s//g;
+                            $cp_cto = parseTimerange($values[1]);                        
                         } elsif ($configline =~ "credential_provider_retrievetimeout") {
-                            $cp_rto = $values[1];
-                            $cp_rto =~ s/\s//g;
+                            $cp_rto = parseTimerange($values[1]);                            
                         }
                     }
                     when ("gad") {
