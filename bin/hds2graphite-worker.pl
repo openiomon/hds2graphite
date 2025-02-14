@@ -1193,9 +1193,22 @@ sub getpools {
             $poolstats{$poolid}{"percentused"} = ($capacity - $available) / $capacity;
             $poolstats{$poolid}{"percentavailable"} = $available / $capacity;
             $poolstats{$poolid}{"volcnt"} = $volcnt;
+            $poolstats{$poolid}{"subscribed"} = 0;
             $poolcnt += 1;
         }
     }
+    $log->info("Retrieving dp pools from HORCM instance #".$horcminst);
+    $getpoolcmd = $ccipath."/usr/bin/raidcom get dp_pool -I".$horcminst;
+    @result = runccicmd($getpoolcmd);
+    foreach my $line (@result) {
+        if ($line !~ "^PID") {
+            my @values = split(" ",$line);
+            my $poolid = $values[0];
+            my $subscribed = $values[10];
+            $poolstats{$poolid}{"subscribed"} = $subscribed;
+        }
+    }
+
     if($poolcnt == 0) {
         $log->error("No pools could be found?");
     }
@@ -1417,6 +1430,7 @@ sub logpoolstats {
             toGraphite("hv_capacity_pool_percentavailable;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"percentavailable"}." ".$now);
             toGraphite("hv_capacity_pool_volumecount;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"volcnt"}." ".$now);
             toGraphite("hv_capacity_pool_available;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"available"}." ".$now);
+            toGraphite("hv_capacity_pool_subscribed;storagetype=".$arraytype{$serial}.";storagename=".$namereference{$serial}.";poolid=".$poolid." ".$poolstats{$poolid}{"subscribed"}." ".$now);
         } else {
             toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".capacity ".$poolstats{$poolid}{"capacity"}." ".$now);
             toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".used ".$poolstats{$poolid}{"used"}." ".$now);
@@ -1424,6 +1438,7 @@ sub logpoolstats {
             toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".percentavailable ".$poolstats{$poolid}{"percentavailable"}." ".$now);
             toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".volumecount ".$poolstats{$poolid}{"volcnt"}." ".$now);
             toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".available ".$poolstats{$poolid}{"available"}." ".$now);
+            toGraphite("hds.capacity.".$arraytype{$serial}.".".$namereference{$serial}.".pool.".$poolid.".subscribed ".$poolstats{$poolid}{"subscribed"}." ".$now);
         }
     }
     closesocket();
