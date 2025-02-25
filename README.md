@@ -53,7 +53,7 @@ restorecon -Rv /opt/hds2graphite/log/
 `exporttool_template = /opt/hds2graphite/conf/templates/g1500_template.txt`  
 `# if virtual devices with GAD should monitored on top of the phyical devices specify the VSM for virtual serial number 99999 and VSM name GAD_VSM_1 and the GAD Resource-Group-ID`  
 `# gad_vsm = serial, type, vsm name, resource group id`  
-`gad_vsm = 99999,g1500,GAD_VSM_1,1`  
+`gad_vsm = 99999,g1500,GAD_VSM_1,1`
 
 * Specify the connection to your Tuning Manager / Infrastructure Analytics Advisor / Ops Center Analyzer
 `# Specify the parameters for HTNM or HIAA access. For Ops Center Analyzer use HIAA`  
@@ -98,6 +98,12 @@ When using Export Tool: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem
 When using HTNM / HIAA: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem name> -realtime`
 
 ## Changelog
+### master
+* add "subscribed capacity" to pool statistics
+
+### 0.5.0
+* add support for central credential provider script
+
 ### 0.4.6
 * add support for special characters in CCI passwords like ! or #
 
