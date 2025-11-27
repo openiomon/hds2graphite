@@ -1,8 +1,8 @@
 Summary:    hds2graphite is a module of openiomon which is used to transfer statistics from the Hitachi block storage systems (G1x00, Gx00, VSP) to a graphite system to be able to display this statistics in Grafana.
 Name:       hds2graphite
-Version:    0.5.0
+Version:    0.5.1
 prefix:     /opt
-Release:    1
+Release:    0
 License:    GPL
 Group:      Applications/Internet
 BuildArch:  noarch
