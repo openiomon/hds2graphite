@@ -850,8 +850,8 @@ sub getCredential {
 	my $cpcmd = $cp_script;
 	my $user = $htnm_user;
 	my $passwd = "";        
-	$cpcmd .= " ".$storagename." ".$user;
-	$log->debug("Query ".$user." for ".$storagename." from credential provider using script: ".$cp_script." with command: ".$cpcmd);
+	$cpcmd .= " ".$htnm_server." ".$user;
+	$log->debug("Query ".$user." for ".$htnm_server." from credential provider using script: ".$cp_script." with command: ".$cpcmd);
 	eval {
 		local $SIG{ALRM} = sub { die "timeout\n" };
 		alarm $cp_rto;
