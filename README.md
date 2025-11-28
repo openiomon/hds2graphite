@@ -98,8 +98,9 @@ When using Export Tool: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem
 When using HTNM / HIAA: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem name> -realtime`
 
 ## Changelog
-### master
+### 0.5.1
 * add "subscribed capacity" to pool statistics
+* change behavior of central credential provider script to use OpsCenter host name as target for account retrieval
 
 ### 0.5.0
 * add support for central credential provider script
