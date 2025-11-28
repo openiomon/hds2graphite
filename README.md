@@ -51,11 +51,11 @@ restorecon -Rv /opt/hds2graphite/log/
 `cci_instance_number = 10`  
 `metric_configruation = /opt/hds2graphite/conf/metrics/g1500_metrics.conf`  
 `exporttool_template = /opt/hds2graphite/conf/templates/g1500_template.txt`  
-`# if virtual devices with GAD should monitored on top of the phyical devices specify the VSM for virtual serial number 99999 and VSM name GAD_VSM_1 and the GAD Resource-Group-ID`  
+`# if virtual devices with GAD should monitored on top of the physical devices specify the VSM for virtual serial number 99999 and VSM name GAD_VSM_1 and the GAD Resource-Group-ID`  
 `# gad_vsm = serial, type, vsm name, resource group id`  
 `gad_vsm = 99999,g1500,GAD_VSM_1,1`
 
-* Specify the connection to your Tuning Manager / Infrastructure Analytics Advisor / Ops Center Analyzer
+* Specify the connection to your Tuning Manager / Infrastructure Analytics Advisor / Ops Center Analyzer  
 `# Specify the parameters for HTNM or HIAA access. For Ops Center Analyzer use HIAA`  
 `# realtime_application can be HTNM or HIAA`  
 `[realtime]`  
@@ -75,6 +75,10 @@ Download the "Customer Tools CD" for your machine type from Hitachi Support and 
 `[cci]`  
 `cci_user = CCI_USERNAME`  
 `cci_passwd = CCI_PASSWORD`  
+`# Optionally a credential provider script can be used to retreive the password at runtime.`  
+`credential_provider_script = /path/of/your/script`  
+`credential_provider_cachetimeout = 24h`  
+`credential_provider_retrievetimeout = 10s`  
 
 * Specify the connection to your carbon/graphite backend  
 `[graphite]`  
