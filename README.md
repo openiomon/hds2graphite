@@ -65,6 +65,10 @@ restorecon -Rv /opt/hds2graphite/log/
 `realtime_api_proto = https`  
 `realtime_api_user = HTNMUSER`  
 `realtime_api_passwd = HTNMPASSWD`  
+`# Optionally a credential provider script can be used to retreive the password at runtime.`  
+`credential_provider_script = /path/of/your/script`  
+`credential_provider_cachetimeout = 24h`  
+`credential_provider_retrievetimeout = 10s`  
 
 * Download Export Tool (when you want to use Export Tool instead of HTNM / HIAA)  
 Download the "Customer Tools CD" for your machine type from Hitachi Support and extract the Export Tool to `/opt/hds2grapghite/gx00`. The Subfolder should match your machine type.
@@ -102,6 +106,9 @@ When using Export Tool: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem
 When using HTNM / HIAA: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem name> -realtime`
 
 ## Changelog
+### 0.5.2
+* add removal of export tool config file after usage to avoid leaking passwords
+
 ### 0.5.1
 * add "subscribed capacity" to pool statistics
 * change behavior of central credential provider script to use OpsCenter host name as target for account retrieval

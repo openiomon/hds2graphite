@@ -42,16 +42,16 @@ my $log; # log4perl logger
 my $logfile = ""; # Logfile definition => provided by config file
 my $etlogfile = ""; # Logfile location for Export Tool => provided by config file
 
-my $conf = ""; #location of the script configuration file => is passed to the script
+my $conf = ""; # location of the script configuration file => is passed to the script
 my $serial = ""; # serial number of the storage system currently being imported => provided by config file
-my $exportpath = ""; # folder containing the Export Tool output which should be importet => provided by config file or passed to the script
-my $exporttoolretrycnt = 3; #defines retry count for Export Tool
-my $exporttoolretrytimeout = 2; #defines retry timeout for Export Tool in minutes
+my $exportpath = ""; # folder containing the Export Tool output which should be imported => provided by config file or passed to the script
+my $exporttoolretrycnt = 3; # defines retry count for Export Tool
+my $exporttoolretrytimeout = 2; # defines retry timeout for Export Tool in minutes
 my $horcminst = ""; # HORCM instance ID pointing to the storage system currently being imported => provided by config file
 my $metricconf = ""; # configuration file containing the metrics which should be imported => provided by config file
 my $storagename = ""; # name of the storage system currently being imported => passed to the script
 my $noexporttool = false; # switch to activate or deactivate the Export Tool => set at runtime
-my $hourstoimport = 1; # number of past hours of Export Tool data which should be => passed to the script
+my $hourstoimport = 1; # number of past hours of Export Tool data which should be imported=> passed to the script
 my $exporttoolstatus = true;
 my $javahome = '/usr/bin';
 
@@ -77,12 +77,12 @@ my %ccicredentials; # Hash including all CCI credentials for the storage arrays
 my %metricfiles; # Hash with all metric files for all storage system types => provided by config file and filled at runtime
 my %exporttooltemplates; # Hash with all Export Tool template files for one storage system type => provided by config file and filled at runtime
 my %exporttoolparams; # Hash containing Export Tool params for all serial numbers => provided by config file
-my %serialreference; # Reverse Hash maping serial number und name of the storage system => provided by config file and filled at runtime
+my %serialreference; # Reverse Hash mapping serial number and name of the storage system => provided by config file and filled at runtime
 my %vsms; # Refernce hash for Global Active Device - Virtual Storage Machine
 my %graphiteconf;
 my %serviceconf;
 
-my %config; # Hash containing alle metric which should be currently imported => provided by config file and filled at runtime
+my %config; # Hash containing all metrics which should be currently imported => provided by config file and filled at runtime
 
 my %poolstats; # Hash containing pool statistics of the storage system => filled at runtime
 my @pgs; # Array containing all Parity Groups of the storage system => filled at runtime
@@ -139,11 +139,11 @@ sub printUsage {
     print("Usage:\n");
     print("$0 [OPTIONS]\n");
     print("OPTIONS:\n");
-    print("   -conf <file>             conf file containig parameter for the import\n");
+    print("   -conf <file>             conf file containing parameter for the import\n");
     print("   -storagesystem <name>    name of the storage system to be imported\n");
     print("   -hours <number of hours> number of hours that should be imported (between 1 and 23)\n");
     print("   -exportpath <dir>        points to directory where Export Tool data is stored for optional manual import\n");
-    print("   -daemon                  used for starting the deamonized version of hds2graphite\n");
+    print("   -daemon                  used for starting the daemonized version of hds2graphite\n");
     print("   -h                       print this output\n");
     print("\n");
 }
@@ -519,7 +519,6 @@ sub readconfig {
                             my @values = split ("=",$configline);
                             my $horcminstnumber = $values[1];
                             $horcminstnumber =~ s/\s//g;
-                            #print $storagename."\n";
                             $cciinstances{$storagename}=$horcminstnumber;
                         } elsif ($configline =~ "cci_user") {
                             my @values = split ("=",$configline);
@@ -915,7 +914,7 @@ sub createexporttoolconf {
     my $cmdtemplate = $exporttooltemplates{$serial};
 
     if(!-f $cmdtemplate) {
-        $log->error("Cannot open erporttool template file! Please check file ".$cmdtemplate);
+        $log->error("Cannot open Export Tool template file! Please check file ".$cmdtemplate);
         exit(1);
     }
 
@@ -951,6 +950,15 @@ sub createexporttoolconf {
     close($cmdfilefp);
     close($cmdtemplatefp);
     chown($openiomonuid,$openiomongid,$cmdfile);
+}
+
+# Sub to remove the Export Tool config when Export Tool run is finished
+# This is done to hide the password as best as possible
+
+sub deleteexporttoolconf {
+    $log->debug("Deleting Export Tool Configfile for ".$serial);
+    my $cmdfile = $exporttoolpath.$arraytype{$serial}."/".$serial.".txt";
+    unlink($cmdfile);
 }
 
 # Sub to start the Export Tool
@@ -1210,7 +1218,7 @@ sub getpools {
     }
 
     if($poolcnt == 0) {
-        $log->error("No pools could be found?");
+        $log->error("No pools could be found!");
     }
 }
 
@@ -1753,7 +1761,7 @@ sub initservice {
             close($sock)
         }
     } else {
-        $log->trace("Looks like we are not runnings as systemd-service!");
+        $log->trace("Looks like we are not running as systemd-service!");
     }
 }
 
@@ -1772,7 +1780,7 @@ sub servicestatus {
             close($sock);
         }
     } else {
-        $log->trace("Looks like we are not runnings as systemd-service!");
+        $log->trace("Looks like we are not running as systemd-service!");
     }
 }
 
@@ -1790,7 +1798,7 @@ sub stopservice {
             close($sock);
         }
     } else {
-        $log->trace("Looks like we are not runnings as systemd-service!");
+        $log->trace("Looks like we are not running as systemd-service!");
     }
 }
 
@@ -1809,7 +1817,7 @@ sub alive {
         }
 
     } else {
-        $log->trace("Looks like we are not runnings as systemd-service!");
+        $log->trace("Looks like we are not running as systemd-service!");
     }
 }
 
@@ -1923,7 +1931,6 @@ do {
     }
 
     # Starting Export Tool
-
     if(!$noexporttool) {
         servicestatus("Running Export Tool...");
         createexporttoolconf();
@@ -1931,10 +1938,10 @@ do {
         $temptime = time;
         $exporttoolstatus = startexporttool();
         logscriptstats("runtime.exporttool",time-$temptime,$starttime,true);
+        deleteexporttoolconf();
     }
 
     # Reading the metric file
-
     readmetric();
 
     # Starting the data import
