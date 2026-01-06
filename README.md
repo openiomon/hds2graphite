@@ -108,6 +108,7 @@ When using HTNM / HIAA: `/opt/hds2graphite/bin/hds2graphite.pl -start <subsystem
 ## Changelog
 ### 0.5.2
 * add removal of export tool config file after usage to avoid leaking passwords
+* fix Export Tool crash by increasing timeout and memory limit values
 
 ### 0.5.1
 * add "subscribed capacity" to pool statistics

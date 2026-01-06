@@ -978,9 +978,9 @@ sub startexporttool {
 
     if(!$pid) {
         my $javacmd;
-        # All G1x00/F1x00 and Gx00/Fx00 systems are handled identical
+        # All 5x00, G1x00/F1x00 and Gx00/Fx00 systems are handled identical
         $classpath = $exporttoolpath.$arraytype{$serial}."/lib/JSanExportLoader.jar";
-        $javacmd = $javahome."/java -classpath \"".$classpath."\" -Del.tool.Xmx=536870912 -Dmd.command=".$cmdfile." -Del.logpath=".$exporttoollog."  -Dmd.rmitimeout=20 sanproject.getexptool.RJElMain";
+        $javacmd = $javahome."/java -classpath \"".$classpath."\" -Del.tool.Xmx=1073741824 -Dmd.command=".$cmdfile." -Del.logpath=".$exporttoollog." -Dmd.rmitimeout=40 sanproject.getexptool.RJElMain";
 
         if ($arraytype{$serial} eq "vsp") {
             $classpath = $exporttoolpath.$arraytype{$serial}."/lib/JSanExport.jar:".$exporttoolpath.$arraytype{$serial}."/lib/JSanRmiApiEx.jar:".$exporttoolpath.$arraytype{$serial}."/lib/JSanRmiServerUx.jar";
