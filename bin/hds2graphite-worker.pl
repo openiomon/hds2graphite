@@ -958,7 +958,9 @@ sub createexporttoolconf {
 sub deleteexporttoolconf {
     $log->debug("Deleting Export Tool Configfile for ".$serial);
     my $cmdfile = $exporttoolpath.$arraytype{$serial}."/".$serial.".txt";
-    unlink($cmdfile);
+    if(-e $cmdfile) {
+        unlink($cmdfile);
+    }
 }
 
 # Sub to start the Export Tool
@@ -973,6 +975,7 @@ sub startexporttool {
 
     if(! -f $javahome."/java") {
         $log->error("No java found in ".$javahome."/java. Please check and install java!");
+        deleteexporttoolconf();
         exit(1);
     }
 
